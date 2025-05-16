@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Farmácia Moderna - Medicamentos</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="container">
+        <a href="#" class="logo">Farmácia Barateira</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Medicamentos Disponíveis</h1>
+    <div id="cards-container" class="cards-container">
+      <!-- Cards vão aparecer aqui pelo JS -->
+    </div>
+  </main>
+
+  <script>
+    const medicamentos = [
+      {
+        nome_fantasia: "Paracetamol",
+        principio_ativo: "Paracetamol",
+        fabricante: "Lab XYZ",
+        preco_venda: 7.5,
+        estoque: 30,
+        descricao: "Analgésico e antipirético muito usado para dor e febre."
+      },
+      {
+        nome_fantasia: "Dipirona",
+        principio_ativo: "Dipirona sódica",
+        fabricante: "Lab ABC",
+        preco_venda: 5.0,
+        estoque: 50,
+        descricao: "Medicamento para aliviar dores e reduzir febre."
+      },
+      {
+        nome_fantasia: "Ibuprofeno",
+        principio_ativo: "Ibuprofeno",
+        fabricante: "Lab DEF",
+        preco_venda: 12.3,
+        estoque: 20,
+        descricao: "Anti-inflamatório e analgésico eficaz."
+      }
+    ];
+
+    const container = document.getElementById('cards-container');
+
+    medicamentos.forEach(med => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      card.innerHTML = `
+        <h2>${med.nome_fantasia}</h2>
+        <p><strong>Princípio Ativo:</strong> ${med.principio_ativo}</p>
+        <p><strong>Fabricante:</strong> ${med.fabricante}</p>
+        <p><strong>Preço:</strong> R$ ${med.preco_venda.toFixed(2)}</p>
+        <p><strong>Estoque:</strong> ${med.estoque}</p>
+        <p class="descricao">${med.descricao}</p>
+        <button class="btn-comprar">Comprar</button>
+      `;
+
+      container.appendChild(card);
+    });
+  </script>
+</body>
+</html>

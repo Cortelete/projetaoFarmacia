@@ -24,5 +24,23 @@ router.get('/estoque/baixo', (req, res) => {
   });
 });
 
+// Ativar promoção em medicamento
+router.put('/:id/promocao', (req, res) => {
+  const id = req.params.id;
+  const { preco_promocional } = req.body;
+
+  Medicamento.promover(id, preco_promocional, (err) => {
+    if (err) return res.status(400).json({ erro: err.message });
+    res.json({ mensagem: 'Promoção aplicada com sucesso!' });
+  });
+});
+
+// Listar medicamentos em promoção
+router.get('/promocoes', (req, res) => {
+  Medicamento.consultarCustom(`SELECT * FROM medicamentos WHERE em_promocao = 1`, (err, rows) => {
+    if (err) return res.status(500).json({ erro: err.message });
+    res.json(rows);
+  });
+});
 
 module.exports = router;
