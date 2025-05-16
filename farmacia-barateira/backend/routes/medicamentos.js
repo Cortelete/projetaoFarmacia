@@ -1,49 +1,39 @@
 const express = require('express');
 const router = express.Router();
 const Medicamento = require('../models/medicamentoModel');
+const db = require('../database/db');
 
-// Rota para listar medicamentos
 router.get('/', (req, res) => {
-  Medicamento.listar((err, rows) => {
-    if (err) return res.status(500).json({ erro: err.message });
+  Medicamento.listarTodos((err, rows) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao buscar medicamentos' });
     res.json(rows);
   });
 });
 
-// Inserir medicamento
 router.post('/', (req, res) => {
-  Medicamento.inserir(req.body, (err) => {
-    if (err) return res.status(500).json({ erro: err.message });
-    res.status(201).json({ mensagem: "Medicamento adicionado com sucesso!" });
+  Medicamento.cadastrar(req.body, (err) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao cadastrar medicamento' });
+    res.status(201).json({ mensagem: 'Medicamento cadastrado com sucesso' });
   });
 });
 
-// Estoque baixo
-router.get('/estoque/baixo', (req, res) => {
-  const sql = `SELECT * FROM medicamentos WHERE estoque < estoque_minimo`;
-  Medicamento.consultarCustom(sql, (err, rows) => {
-    if (err) return res.status(500).json({ erro: err.message });
-    res.json(rows);
-  });
+router.put('/', (req, res) => {
+  const { nome, campo, valor } = req.body;
+  const camposPermitidos = ['estoqueAtual', 'fabricante'];
+
+  if (!camposPermitidos.includes(campo)) {
+    return res.status(400).json({ erro: 'Campo inválido para atualização' });
+  }
+
+  db.run(
+    `UPDATE medicamentos SET ${campo} = ? WHERE nome = ?`,
+    [valor, nome],
+    function (err) {
+      if (err) return res.status(500).json({ erro: err.message });
+      res.json({ mensagem: 'Atualizado com sucesso' });
+    }
+  );
 });
 
-// Aplicar promoção
-router.put('/:id/promocao', (req, res) => {
-  const id = req.params.id;
-  const { preco_promocional } = req.body;
-
-  Medicamento.promover(id, preco_promocional, (err) => {
-    if (err) return res.status(400).json({ erro: err.message });
-    res.json({ mensagem: 'Promoção aplicada com sucesso!' });
-  });
-});
-
-// Listar promoções
-router.get('/promocoes', (req, res) => {
-  Medicamento.consultarCustom(`SELECT * FROM medicamentos WHERE em_promocao = 1`, (err, rows) => {
-    if (err) return res.status(500).json({ erro: err.message });
-    res.json(rows);
-  });
-});
 
 module.exports = router;

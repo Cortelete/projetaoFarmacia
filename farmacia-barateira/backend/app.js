@@ -1,12 +1,18 @@
 const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
+const loginRoutes = require('./routes/login');
+const usuarioRoutes = require('./routes/usuarios');
+const medicamentoRoutes = require('./routes/medicamentos');
+
 const app = express();
-const medicamentosRouter = require('./routes/medicamentos');
 
-app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
-app.use('/medicamentos', medicamentosRouter);
+app.use('/api/login', loginRoutes);
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/medicamentos', medicamentoRoutes);
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+module.exports = app;
