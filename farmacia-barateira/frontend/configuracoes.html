@@ -71,7 +71,7 @@
     <main class="flex-1 p-8 overflow-x-auto">
         <h2 class="text-2xl font-semibold text-gray-700 mb-6">Configurações do Sistema ⚙️</h2>
 
-        <!-- Navegação por Abas (Opcional) -->
+        <!-- Navegação por Abas -->
         <div class="mb-6 border-b border-gray-200">
             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                 <a href="#" class="border-cyan-500 text-cyan-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page">
@@ -149,7 +149,7 @@
             <p class="text-gray-600 mb-4">Gerencie os usuários do sistema, seus cargos e permissões.</p>
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-500">Você tem 3 usuários cadastrados.</span>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+                <button id="gerenciar-usuarios-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
                     Gerenciar Usuários
                 </button>
             </div>
@@ -180,7 +180,7 @@
                 </div>
             </div>
             <div class="flex justify-end mt-6">
-                <button type="submit" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+                <button id="salvar-preferencias-btn" type="button" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
                     Salvar Preferências
                 </button>
             </div>
@@ -196,45 +196,33 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="border rounded-lg p-4 flex items-center justify-between">
                     <div class="flex items-center">
-                        <img src="https://via.placeholder.com/40" alt="Logo Serviço 1" class="h-10 w-10 mr-3">
+                        <img src="https://via.placeholder.com/40/3B82F6/FFFFFF?text=P" alt="Logo Serviço 1" class="h-10 w-10 mr-3 rounded-full bg-blue-500">
                         <div>
                             <h4 class="font-medium text-gray-800">Serviço de Pagamento Online</h4>
                             <p class="text-sm text-gray-500">Não conectado</p>
                         </div>
                     </div>
-                    <button class="text-cyan-600 hover:text-cyan-800 text-sm">Conectar</button>
+                    <button id="conectar-integracao-1" class="text-cyan-600 hover:text-cyan-800 text-sm">Conectar</button>
                 </div>
                 <div class="border rounded-lg p-4 flex items-center justify-between">
                     <div class="flex items-center">
-                        <img src="https://via.placeholder.com/40" alt="Logo Serviço 2" class="h-10 w-10 mr-3">
+                        <img src="https://via.placeholder.com/40/10B981/FFFFFF?text=E" alt="Logo Serviço 2" class="h-10 w-10 mr-3 rounded-full bg-emerald-500">
                         <div>
-                            <h4 class="font-medium text-gray-800">Plataforma de Marketing</h4>
+                            <h4 class="font-medium text-gray-800">Plataforma de Email Marketing</h4>
                             <p class="text-sm text-green-600">Conectado</p>
                         </div>
                     </div>
-                    <button class="text-gray-500 hover:text-gray-700 text-sm">Gerenciar</button>
+                    <button id="conectar-integracao-2" class="text-red-600 hover:text-red-800 text-sm">Desconectar</button> 
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Script para funcionalidades da página de Configurações -->
+    <!-- Scripts -->
+    <script src="fix_menu.js"></script>
     <script src="configuracoes_script.js"></script> 
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("Página carregada: " + document.title);
-  
-  // Garantir que os links do menu funcionem
-  document.querySelectorAll('aside a').forEach(link => {
-    link.addEventListener('click', function(e) {
-      console.log("Clicou em: " + this.href);
-      // Não previne o comportamento padrão para permitir a navegação
-    });
-  });
-});
-</script>
-<script src="fix_menu.js"></script>
 
 </body>
 </html>
+

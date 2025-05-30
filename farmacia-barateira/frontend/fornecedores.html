@@ -101,7 +101,7 @@
         <!-- Cards de Fornecedores -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" id="fornecedores-container">
             <!-- Exemplo de Card de Fornecedor 1 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden fornecedor-card transition-all duration-300">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden fornecedor-card transition-all duration-300" data-fornecedor-id="1">
                 <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-50">
                     <div class="flex justify-between items-start">
                         <div>
@@ -146,13 +146,13 @@
                             <span class="text-sm text-gray-500">Última compra: 15/05/2025</span>
                         </div>
                         <div class="flex space-x-2">
-                            <button class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition-colors">
-                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button data-action="editar" data-id="1" class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition-colors">
+                                <svg class="h-5 w-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                 </svg>
                             </button>
-                            <button class="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition-colors">
-                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button data-action="excluir" data-id="1" class="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition-colors">
+                                <svg class="h-5 w-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </button>
@@ -162,7 +162,7 @@
             </div>
 
             <!-- Exemplo de Card de Fornecedor 2 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden fornecedor-card transition-all duration-300">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden fornecedor-card transition-all duration-300" data-fornecedor-id="2">
                 <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-50">
                     <div class="flex justify-between items-start">
                         <div>
@@ -191,29 +191,28 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            Rua Tecnológica, 500 - Campinas/SP
+                            Rua da Tecnologia, 500 - Campinas/SP
                         </p>
                     </div>
                     <div class="mt-4">
                         <h4 class="font-medium text-gray-700 mb-2">Produtos Fornecidos:</h4>
                         <div class="flex flex-wrap gap-2">
-                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Equipamentos</span>
-                            <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Instrumentos</span>
-                            <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">Tecnologia</span>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Equipamentos Médicos</span>
+                            <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Materiais Descartáveis</span>
                         </div>
                     </div>
                     <div class="flex justify-between items-center mt-4">
                         <div>
-                            <span class="text-sm text-gray-500">Última compra: 02/04/2025</span>
+                            <span class="text-sm text-gray-500">Última compra: 01/04/2025</span>
                         </div>
                         <div class="flex space-x-2">
-                            <button class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition-colors">
-                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button data-action="editar" data-id="2" class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition-colors">
+                                <svg class="h-5 w-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                 </svg>
                             </button>
-                            <button class="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition-colors">
-                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button data-action="excluir" data-id="2" class="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition-colors">
+                                <svg class="h-5 w-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </button>
@@ -223,14 +222,14 @@
             </div>
 
             <!-- Exemplo de Card de Fornecedor 3 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden fornecedor-card transition-all duration-300">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden fornecedor-card transition-all duration-300" data-fornecedor-id="3">
                 <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-50">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800">NaturaPharma</h3>
-                            <p class="text-gray-600 mt-1">CNPJ: 45.678.901/0001-23</p>
+                            <h3 class="text-xl font-semibold text-gray-800">Global Farma</h3>
+                            <p class="text-gray-600 mt-1">CNPJ: 55.555.555/0001-55</p>
                         </div>
-                        <div class="text-3xl">🌿</div>
+                        <div class="text-3xl">🌍</div>
                     </div>
                 </div>
                 <div class="p-5">
@@ -239,42 +238,41 @@
                             <svg class="h-5 w-5 mr-2 text-cyan-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            comercial@naturapharma.com.br
+                            comercial@globalfarma.com
                         </p>
                         <p class="flex items-center text-gray-700 mb-2">
                             <svg class="h-5 w-5 mr-2 text-cyan-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
-                            (11) 4567-8901
+                            (21) 9876-5432
                         </p>
                         <p class="flex items-center text-gray-700">
                             <svg class="h-5 w-5 mr-2 text-cyan-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            Estrada Rural, 789 - Ribeirão Preto/SP
+                            Rua Principal, 789 - Rio de Janeiro/RJ
                         </p>
                     </div>
                     <div class="mt-4">
                         <h4 class="font-medium text-gray-700 mb-2">Produtos Fornecidos:</h4>
                         <div class="flex flex-wrap gap-2">
-                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Fitoterápicos</span>
-                            <span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full">Naturais</span>
-                            <span class="bg-lime-100 text-lime-800 text-xs px-2 py-1 rounded-full">Orgânicos</span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Medicamentos Genéricos</span>
+                            <span class="bg-pink-100 text-pink-800 text-xs px-2 py-1 rounded-full">Higiene Pessoal</span>
                         </div>
                     </div>
                     <div class="flex justify-between items-center mt-4">
                         <div>
-                            <span class="text-sm text-gray-500">Última compra: 20/05/2025</span>
+                            <span class="text-sm text-gray-500">Última compra: 20/03/2025</span>
                         </div>
                         <div class="flex space-x-2">
-                            <button class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition-colors">
-                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button data-action="editar" data-id="3" class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition-colors">
+                                <svg class="h-5 w-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                 </svg>
                             </button>
-                            <button class="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition-colors">
-                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button data-action="excluir" data-id="3" class="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition-colors">
+                                <svg class="h-5 w-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </button>
@@ -282,104 +280,93 @@
                     </div>
                 </div>
             </div>
+            <!-- Fim dos exemplos -->
         </div>
 
-        <!-- Paginação -->
+        <!-- Paginação (Exemplo) -->
         <div class="flex justify-center mt-8">
-            <nav class="inline-flex rounded-md shadow">
-                <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 text-gray-500">
-                    Anterior
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Anterior</span>
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
                 </a>
-                <a href="#" class="py-2 px-4 bg-cyan-600 border border-cyan-600 text-white">
-                    1
-                </a>
-                <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700">
-                    2
-                </a>
-                <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 text-gray-700">
-                    Próximo
+                <a href="#" aria-current="page" class="z-10 bg-cyan-50 border-cyan-500 text-cyan-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">1</a>
+                <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
+                <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Próximo</span>
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
                 </a>
             </nav>
         </div>
+
+        <!-- Modal para Adicionar/Editar Fornecedor -->
+        <div id="fornecedor-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
+            <div class="relative mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+                <div class="mt-3 text-center">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">Adicionar Novo Fornecedor</h3>
+                    <form id="fornecedor-form" class="mt-2 text-left">
+                        <input type="hidden" id="fornecedor-id">
+                        <div class="mb-4">
+                            <label for="nome-fantasia" class="block text-sm font-medium text-gray-700">Nome Fantasia</label>
+                            <input type="text" name="nome-fantasia" id="nome-fantasia" required class="mt-1 focus:ring-cyan-500 focus:border-cyan-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+                        </div>
+                        <div class="mb-4">
+                            <label for="razao-social" class="block text-sm font-medium text-gray-700">Razão Social</label>
+                            <input type="text" name="razao-social" id="razao-social" required class="mt-1 focus:ring-cyan-500 focus:border-cyan-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+                        </div>
+                        <div class="mb-4">
+                            <label for="cnpj" class="block text-sm font-medium text-gray-700">CNPJ</label>
+                            <input type="text" name="cnpj" id="cnpj" required class="mt-1 focus:ring-cyan-500 focus:border-cyan-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+                        </div>
+                        <div class="mb-4">
+                            <label for="email-fornecedor" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" name="email-fornecedor" id="email-fornecedor" class="mt-1 focus:ring-cyan-500 focus:border-cyan-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+                        </div>
+                        <div class="mb-4">
+                            <label for="telefone-fornecedor" class="block text-sm font-medium text-gray-700">Telefone</label>
+                            <input type="tel" name="telefone-fornecedor" id="telefone-fornecedor" class="mt-1 focus:ring-cyan-500 focus:border-cyan-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+                        </div>
+                        <div class="mb-4">
+                            <label for="endereco-fornecedor" class="block text-sm font-medium text-gray-700">Endereço</label>
+                            <input type="text" name="endereco-fornecedor" id="endereco-fornecedor" class="mt-1 focus:ring-cyan-500 focus:border-cyan-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+                        </div>
+                        <div class="mb-4">
+                            <label for="tipo-produto" class="block text-sm font-medium text-gray-700">Tipo de Produto Principal</label>
+                            <select id="tipo-produto" name="tipo-produto" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm">
+                                <option value="Medicamentos">Medicamentos</option>
+                                <option value="Cosméticos">Cosméticos</option>
+                                <option value="Higiene Pessoal">Higiene Pessoal</option>
+                                <option value="Equipamentos Médicos">Equipamentos Médicos</option>
+                                <option value="Suplementos">Suplementos</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        <div id="modal-error-message" class="text-red-500 text-sm mb-4 hidden"></div>
+                        <div class="items-center px-4 py-3">
+                            <button id="save-button" type="submit" class="px-4 py-2 bg-green-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300">
+                                Salvar Fornecedor
+                            </button>
+                        </div>
+                    </form>
+                    <div class="items-center px-4 py-3">
+                        <button id="cancel-button" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- Modal para Adicionar/Editar Fornecedor -->
-    <div id="fornecedor-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
-        <div class="relative mx-auto p-8 border w-full max-w-2xl shadow-lg rounded-md bg-white">
-            <h3 id="modal-title" class="text-2xl font-semibold mb-6 flex items-center">
-                <span class="mr-2">Adicionar Fornecedor</span>
-                <span class="text-3xl">🏭</span>
-            </h3>
-            <form id="fornecedor-form">
-                <input type="hidden" id="fornecedor-id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                    <div>
-                        <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome da Empresa</label>
-                        <input type="text" id="nome" name="nome" required class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
-                    </div>
-                    <div>
-                        <label for="cnpj" class="block text-sm font-medium text-gray-700 mb-1">CNPJ</label>
-                        <input type="text" id="cnpj" name="cnpj" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" id="email" name="email" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
-                    </div>
-                    <div>
-                        <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                        <input type="tel" id="telefone" name="telefone" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label for="endereco" class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-                        <input type="text" id="endereco" name="endereco" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label for="categorias" class="block text-sm font-medium text-gray-700 mb-1">Categorias de Produtos</label>
-                        <div class="flex flex-wrap gap-2 mt-2">
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" class="form-checkbox h-4 w-4 text-cyan-600" name="categoria" value="medicamentos">
-                                <span class="ml-2 text-sm text-gray-700">Medicamentos</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" class="form-checkbox h-4 w-4 text-cyan-600" name="categoria" value="equipamentos">
-                                <span class="ml-2 text-sm text-gray-700">Equipamentos</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" class="form-checkbox h-4 w-4 text-cyan-600" name="categoria" value="cosmeticos">
-                                <span class="ml-2 text-sm text-gray-700">Cosméticos</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" class="form-checkbox h-4 w-4 text-cyan-600" name="categoria" value="naturais">
-                                <span class="ml-2 text-sm text-gray-700">Naturais</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div id="modal-error-message" class="text-red-500 text-sm mb-4" style="display: none;"></div>
-                <div class="flex justify-end space-x-4 mt-8">
-                    <button type="button" id="cancel-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Cancelar</button>
-                    <button type="submit" id="save-button" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Script para funcionalidades da página de Fornecedores -->
-    <script src="fornecedores_script.js"></script> 
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("Página carregada: " + document.title);
-  
-  // Garantir que os links do menu funcionem
-  document.querySelectorAll('aside a').forEach(link => {
-    link.addEventListener('click', function(e) {
-      console.log("Clicou em: " + this.href);
-      // Não previne o comportamento padrão para permitir a navegação
-    });
-  });
-});
-</script>
-<script src="fix_menu.js"></script>
+    <script src="fornecedores_script.js"></script>
+    <script src="fix_menu.js"></script>
 
 </body>
 </html>
+

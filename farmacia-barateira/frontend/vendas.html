@@ -197,7 +197,7 @@
         <!-- Resultados da Busca -->
         <div id="resultados-busca" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <!-- Exemplo de Card de Produto -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden produto-card transition-all duration-300">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden produto-card transition-all duration-300" data-produto-id="1">
                 <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-cyan-50 to-blue-50">
                     <div class="flex justify-between items-start">
                         <div>
@@ -215,20 +215,22 @@
                         </div>
                         <div class="flex justify-between mb-2">
                             <span class="text-gray-700">Estoque:</span>
-                            <span class="font-medium">42 unidades</span>
+                            <span class="font-medium text-green-600">50 un.</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-700">Preço:</span>
-                            <span class="font-medium text-green-600">R$ 19,90</span>
+                            <span class="font-bold text-lg text-blue-600">R$ 19,90</span>
                         </div>
                     </div>
                     <div class="flex items-center justify-between mt-4">
                         <div class="flex items-center">
-                            <label for="qtd-1" class="mr-2 text-sm text-gray-700">Quantidade:</label>
-                            <input type="number" id="qtd-1" min="1" max="42" value="1" class="w-16 border rounded py-1 px-2 text-center">
+                            <label for="quantidade-1" class="text-sm mr-2">Quantidade:</label>
+                            <input type="number" id="quantidade-1" name="quantidade" value="1" min="1" max="50" 
+                                   class="w-16 border rounded py-1 px-2 text-center">
                         </div>
-                        <button class="bg-cyan-600 hover:bg-cyan-700 text-white py-1 px-3 rounded text-sm flex items-center">
-                            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button data-action="adicionar" 
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
+                            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                             Adicionar
@@ -236,16 +238,15 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Exemplo de Card de Produto 2 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden produto-card transition-all duration-300">
-                <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-cyan-50 to-blue-50">
+            <!-- Outro Exemplo -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden produto-card transition-all duration-300" data-produto-id="2">
+                <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="text-xl font-semibold text-gray-800">Paracetamol 500mg</h3>
-                            <p class="text-gray-600 mt-1">Acetaminofeno</p>
+                            <p class="text-gray-600 mt-1">Genérico Med</p>
                         </div>
-                        <div class="text-3xl">💊</div>
+                        <div class="text-3xl">🩹</div>
                     </div>
                 </div>
                 <div class="p-5">
@@ -256,20 +257,22 @@
                         </div>
                         <div class="flex justify-between mb-2">
                             <span class="text-gray-700">Estoque:</span>
-                            <span class="font-medium">120 unidades</span>
+                            <span class="font-medium text-green-600">120 un.</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-700">Preço:</span>
-                            <span class="font-medium text-green-600">R$ 5,99</span>
+                            <span class="font-bold text-lg text-blue-600">R$ 5,99</span>
                         </div>
                     </div>
                     <div class="flex items-center justify-between mt-4">
                         <div class="flex items-center">
-                            <label for="qtd-2" class="mr-2 text-sm text-gray-700">Quantidade:</label>
-                            <input type="number" id="qtd-2" min="1" max="120" value="1" class="w-16 border rounded py-1 px-2 text-center">
+                            <label for="quantidade-2" class="text-sm mr-2">Quantidade:</label>
+                            <input type="number" id="quantidade-2" name="quantidade" value="1" min="1" max="120" 
+                                   class="w-16 border rounded py-1 px-2 text-center">
                         </div>
-                        <button class="bg-cyan-600 hover:bg-cyan-700 text-white py-1 px-3 rounded text-sm flex items-center">
-                            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button data-action="adicionar" 
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
+                            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                             Adicionar
@@ -277,16 +280,15 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Exemplo de Card de Produto 3 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden produto-card transition-all duration-300">
-                <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-cyan-50 to-blue-50">
+            <!-- Mais um Exemplo -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden produto-card transition-all duration-300" data-produto-id="3">
+                <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-lime-50">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-800">Vitamina C 1000mg</h3>
-                            <p class="text-gray-600 mt-1">Ácido Ascórbico</p>
+                            <h3 class="text-xl font-semibold text-gray-800">Vitamina C Efervescente</h3>
+                            <p class="text-gray-600 mt-1">Vita C+</p>
                         </div>
-                        <div class="text-3xl">💊</div>
+                        <div class="text-3xl">🍊</div>
                     </div>
                 </div>
                 <div class="p-5">
@@ -297,20 +299,22 @@
                         </div>
                         <div class="flex justify-between mb-2">
                             <span class="text-gray-700">Estoque:</span>
-                            <span class="font-medium">85 unidades</span>
+                            <span class="font-medium text-orange-500">15 un.</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-700">Preço:</span>
-                            <span class="font-medium text-green-600">R$ 12,50</span>
+                            <span class="font-bold text-lg text-blue-600">R$ 24,50</span>
                         </div>
                     </div>
                     <div class="flex items-center justify-between mt-4">
                         <div class="flex items-center">
-                            <label for="qtd-3" class="mr-2 text-sm text-gray-700">Quantidade:</label>
-                            <input type="number" id="qtd-3" min="1" max="85" value="1" class="w-16 border rounded py-1 px-2 text-center">
+                            <label for="quantidade-3" class="text-sm mr-2">Quantidade:</label>
+                            <input type="number" id="quantidade-3" name="quantidade" value="1" min="1" max="15" 
+                                   class="w-16 border rounded py-1 px-2 text-center">
                         </div>
-                        <button class="bg-cyan-600 hover:bg-cyan-700 text-white py-1 px-3 rounded text-sm flex items-center">
-                            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button data-action="adicionar" 
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
+                            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                             Adicionar
@@ -327,139 +331,83 @@
                 <span class="text-xl">🛒</span>
             </h3>
             <div class="overflow-x-auto">
-                <table class="min-w-full leading-normal">
-                    <thead>
-                        <tr class="bg-gray-200 text-gray-600 uppercase text-xs leading-normal">
-                            <th class="py-3 px-6 text-left">Produto</th>
-                            <th class="py-3 px-6 text-center">Quantidade</th>
-                            <th class="py-3 px-6 text-right">Preço Unit.</th>
-                            <th class="py-3 px-6 text-right">Subtotal</th>
-                            <th class="py-3 px-6 text-center">Ações</th>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produto</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantidade</th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Preço Unit.</th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="carrinho-itens" class="text-gray-700 text-sm">
-                        <!-- Exemplo de item no carrinho -->
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="py-3 px-6 text-left">
-                                <div>
-                                    <p class="font-medium">Paracetamol 500mg</p>
-                                    <p class="text-xs text-gray-500">Genérico</p>
-                                </div>
-                            </td>
-                            <td class="py-3 px-6 text-center">
-                                <div class="flex justify-center items-center">
-                                    <button class="text-gray-500 hover:text-gray-700 mr-2">
-                                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                        </svg>
-                                    </button>
-                                    <span>2</span>
-                                    <button class="text-gray-500 hover:text-gray-700 ml-2">
-                                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                            <td class="py-3 px-6 text-right">R$ 5,99</td>
-                            <td class="py-3 px-6 text-right font-medium">R$ 11,98</td>
-                            <td class="py-3 px-6 text-center">
-                                <button class="text-red-600 hover:text-red-800 hover:bg-red-100 p-1 rounded-full transition-colors">
-                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Exemplo de item no carrinho 2 -->
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="py-3 px-6 text-left">
-                                <div>
-                                    <p class="font-medium">Vitamina C 1000mg</p>
-                                    <p class="text-xs text-gray-500">Suplemento</p>
-                                </div>
-                            </td>
-                            <td class="py-3 px-6 text-center">
-                                <div class="flex justify-center items-center">
-                                    <button class="text-gray-500 hover:text-gray-700 mr-2">
-                                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                        </svg>
-                                    </button>
-                                    <span>1</span>
-                                    <button class="text-gray-500 hover:text-gray-700 ml-2">
-                                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                            <td class="py-3 px-6 text-right">R$ 12,50</td>
-                            <td class="py-3 px-6 text-right font-medium">R$ 12,50</td>
-                            <td class="py-3 px-6 text-center">
-                                <button class="text-red-600 hover:text-red-800 hover:bg-red-100 p-1 rounded-full transition-colors">
-                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </td>
+                    <tbody id="carrinho-itens" class="bg-white divide-y divide-gray-200">
+                        <!-- Itens do carrinho serão inseridos aqui via JS -->
+                        <tr id="carrinho-vazio" class="text-center">
+                            <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Carrinho vazio.</td>
                         </tr>
                     </tbody>
+                    <tfoot class="bg-gray-50">
+                        <tr>
+                            <td colspan="3" class="px-6 py-3 text-right text-sm font-medium text-gray-500 uppercase">Total de Itens:</td>
+                            <td id="carrinho-total-itens" class="px-6 py-3 text-right text-sm font-medium text-gray-900">0</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="px-6 py-3 text-right text-sm font-medium text-gray-500 uppercase">Total Geral:</td>
+                            <td id="carrinho-total-geral" class="px-6 py-3 text-right text-lg font-bold text-green-600">R$ 0,00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
-            </div>
-            <div class="mt-4 text-right">
-                <p class="text-sm text-gray-600">Total de itens: <span class="font-medium">3</span></p>
-                <p class="text-lg font-bold text-green-600">Total: R$ 24,48</p>
             </div>
         </div>
 
-        <!-- Formas de Pagamento -->
+        <!-- Forma de Pagamento -->
         <div class="bg-white p-5 rounded-lg shadow mb-6">
             <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
                 <span class="mr-2">Forma de Pagamento</span>
                 <span class="text-xl">💳</span>
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50 transition-colors">
-                    <input type="radio" name="pagamento" value="dinheiro" class="form-radio h-5 w-5 text-cyan-600">
-                    <span class="ml-2 text-gray-700">Dinheiro</span>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
+                <label class="flex items-center space-x-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input type="radio" name="forma-pagamento" value="Dinheiro" class="form-radio h-4 w-4 text-cyan-600">
+                    <span>Dinheiro</span>
                 </label>
-                <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50 transition-colors">
-                    <input type="radio" name="pagamento" value="cartao_credito" class="form-radio h-5 w-5 text-cyan-600" checked>
-                    <span class="ml-2 text-gray-700">Cartão de Crédito</span>
+                <label class="flex items-center space-x-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input type="radio" name="forma-pagamento" value="Cartão de Crédito" class="form-radio h-4 w-4 text-cyan-600">
+                    <span>Cartão de Crédito</span>
                 </label>
-                <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50 transition-colors">
-                    <input type="radio" name="pagamento" value="cartao_debito" class="form-radio h-5 w-5 text-cyan-600">
-                    <span class="ml-2 text-gray-700">Cartão de Débito</span>
+                <label class="flex items-center space-x-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input type="radio" name="forma-pagamento" value="Cartão de Débito" class="form-radio h-4 w-4 text-cyan-600">
+                    <span>Cartão de Débito</span>
                 </label>
-                <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50 transition-colors">
-                    <input type="radio" name="pagamento" value="pix" class="form-radio h-5 w-5 text-cyan-600">
-                    <span class="ml-2 text-gray-700">PIX</span>
+                <label class="flex items-center space-x-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input type="radio" name="forma-pagamento" value="PIX" class="form-radio h-4 w-4 text-cyan-600">
+                    <span>PIX</span>
                 </label>
-                <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-gray-50 transition-colors">
-                    <input type="radio" name="pagamento" value="boleto" class="form-radio h-5 w-5 text-cyan-600">
-                    <span class="ml-2 text-gray-700">Boleto Bancário</span>
+                <label class="flex items-center space-x-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input type="radio" name="forma-pagamento" value="Boleto Bancário" class="form-radio h-4 w-4 text-cyan-600">
+                    <span>Boleto Bancário</span>
                 </label>
             </div>
-            <div id="opcoes-cartao" class="mt-4 p-4 border rounded bg-gray-50">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="parcelas" class="block text-sm font-medium text-gray-700 mb-1">Parcelas</label>
-                        <select id="parcelas" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
-                            <option value="1">1x de R$ 24,48 (sem juros)</option>
-                            <option value="2">2x de R$ 12,24 (sem juros)</option>
-                            <option value="3">3x de R$ 8,16 (sem juros)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="bandeira" class="block text-sm font-medium text-gray-700 mb-1">Bandeira</label>
-                        <select id="bandeira" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
-                            <option value="visa">Visa</option>
-                            <option value="mastercard">Mastercard</option>
-                            <option value="amex">American Express</option>
-                            <option value="elo">Elo</option>
-                        </select>
-                    </div>
+            <!-- Detalhes do Cartão (aparece se Cartão de Crédito for selecionado) -->
+            <div id="detalhes-cartao" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 border rounded-lg bg-gray-50">
+                <div>
+                    <label for="parcelas" class="block text-sm font-medium text-gray-700 mb-1">Parcelas</label>
+                    <select id="parcelas" name="parcelas" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                        <!-- Opções de parcelas serão preenchidas via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label for="bandeira" class="block text-sm font-medium text-gray-700 mb-1">Bandeira</label>
+                    <select id="bandeira" name="bandeira" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                        <option value="Visa">Visa</option>
+                        <option value="Mastercard">Mastercard</option>
+                        <option value="American Express">American Express</option>
+                        <option value="Elo">Elo</option>
+                        <option value="Outra">Outra</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -470,74 +418,35 @@
                 <span class="mr-2">Observações</span>
                 <span class="text-xl">📝</span>
             </h3>
-            <textarea id="observacoes" rows="3" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2" 
-                      placeholder="Adicione observações sobre a venda, instruções especiais, etc."></textarea>
+            <textarea id="observacoes" name="observacoes" rows="3" 
+                      placeholder="Adicione observações sobre a venda, instruções especiais, etc."
+                      class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2"></textarea>
         </div>
 
-        <!-- Botões de Ação -->
-        <div class="flex justify-end space-x-4 mt-8">
-            <button id="cancelar-venda-button-bottom" 
-                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        <!-- Botões Finais -->
+        <div class="flex justify-end space-x-4">
+            <button id="cancelar-venda-button-final" 
+                    class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
+                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
                 Cancelar Venda
             </button>
-            <button id="finalizar-venda-button-bottom" 
-                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center">
+            <button id="finalizar-venda-button-final" 
+                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
                 <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
                 Finalizar Venda
             </button>
         </div>
+
     </main>
 
-    <!-- Modal de Confirmação de Venda -->
-    <div id="confirmacao-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
-        <div class="relative mx-auto p-8 border w-full max-w-md shadow-lg rounded-md bg-white">
-            <h3 class="text-2xl font-semibold mb-6 flex items-center text-green-600">
-                <svg class="h-8 w-8 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Venda Finalizada!
-            </h3>
-            <div class="mb-6">
-                <p class="mb-4">A venda foi registrada com sucesso!</p>
-                <div class="bg-gray-50 p-4 rounded-md">
-                    <p class="font-medium">Resumo da venda:</p>
-                    <p>Cliente: Maria Silva</p>
-                    <p>Total: R$ 24,48</p>
-                    <p>Forma de pagamento: Cartão de Crédito</p>
-                    <p>Data: 30/05/2025 14:35</p>
-                </div>
-            </div>
-            <div class="flex justify-between">
-                <button id="imprimir-button" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center">
-                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    Imprimir
-                </button>
-                <button id="nova-venda-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Nova Venda
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Script para funcionalidades da página de Vendas -->
-    <script src="vendas_script.js"></script> 
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("Página carregada: " + document.title);
-  
-  // Garantir que os links do menu funcionem
-  document.querySelectorAll('aside a').forEach(link => {
-    link.addEventListener('click', function(e) {
-      console.log("Clicou em: " + this.href);
-      // Não previne o comportamento padrão para permitir a navegação
-    });
-  });
-});
-</script>
+    <!-- Script para funcionalidades da Venda -->
+    <script src="vendas_script.js"></script>
+    <script src="fix_menu.js"></script>
 
 </body>
 </html>
+
