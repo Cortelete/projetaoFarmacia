@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque - Farmácia A Barateira</title>
+    <!-- Incluindo Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones (Heroicons via CDN) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/heroicons/2.1.3/24/outline/heroicons.min.css" rel="stylesheet">
+    <!-- Link para CSS customizado (se necessário) -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilo para esconder/mostrar submenus (exemplo) */
+        .submenu { display: none; }
+        .menu-item:hover .submenu { display: block; }
+        /* Estilos adicionais para tabela se necessário */
+        tbody tr:hover { background-color: #f0f9ff; /* Azul bem claro */ }
+    </style>
+</head>
+<body class="bg-gray-100 flex">
+
+    <!-- Sidebar (Mesma estrutura do dashboard.html para consistência) -->
+    <aside class="w-64 bg-gradient-to-b from-blue-600 to-cyan-600 text-white flex flex-col min-h-screen p-4 shadow-lg">
+        <div class="flex items-center mb-8">
+            <svg class="h-8 w-8 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /> 
+            </svg>
+            <h1 class="text-xl font-bold">A Barateira</h1>
+        </div>
+        <nav class="flex-1">
+             <ul>
+                <li class="mb-4 menu-item"><a href="dashboard.html" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>Início</a></li>
+                <li class="mb-4 menu-item">
+                    <a href="#" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Vendas</a>
+                    <ul class="submenu ml-4 mt-2">
+                        <li><a href="#" class="block p-1 hover:bg-cyan-800 rounded">Nova Venda</a></li>
+                        <li><a href="#" class="block p-1 hover:bg-cyan-800 rounded">Histórico</a></li>
+                    </ul>
+                </li>
+                 <li class="mb-4 menu-item bg-cyan-700 rounded"> <!-- Item ativo -->
+                    <a href="estoque.html" class="flex items-center p-2 rounded"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>Estoque</a>
+                     <ul class="submenu ml-4 mt-2">
+                        <li><a href="estoque.html" class="block p-1 hover:bg-cyan-800 rounded">Visualizar</a></li>
+                        <li><a href="#" class="block p-1 hover:bg-cyan-800 rounded">Cadastrar Medicamento</a></li>
+                        <li><a href="#" class="block p-1 hover:bg-cyan-800 rounded">Registrar Compra</a></li>
+                    </ul>
+                </li>
+                <li class="mb-4 menu-item"><a href="#" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.197-5.986" /></svg>Clientes</a></li>
+                <li class="mb-4 menu-item"><a href="#" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>Fornecedores</a></li>
+                <li class="mb-4 menu-item"><a href="#" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-3-5v5m-3-8v8M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H7a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>Relatórios</a></li>
+                <li class="mb-4 menu-item"><a href="#" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>Configurações</a></li>
+            </ul>
+        </nav>
+        <div class="mt-auto">
+            <button id="logout-button" class="flex items-center w-full p-2 rounded text-red-300 hover:bg-red-700 hover:text-white"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>Sair</button>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 p-8 overflow-x-auto">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-6">Gerenciamento de Estoque</h2>
+
+        <!-- Barra de Ações -->
+        <div class="flex justify-between items-center mb-6">
+            <div class="relative w-full max-w-xs">
+                <input type="text" id="search-input" placeholder="Buscar medicamento..." 
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent pl-10">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                     <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+            </div>
+            <button id="add-medicamento-button" 
+                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
+                 <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Adicionar Medicamento
+            </button>
+        </div>
+
+        <!-- Tabela de Medicamentos -->
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">Nome</th>
+                        <th class="py-3 px-6 text-left">Princípio Ativo</th>
+                        <th class="py-3 px-6 text-left">Tipo</th>
+                        <th class="py-3 px-6 text-right">Preço</th>
+                        <th class="py-3 px-6 text-center">Estoque</th>
+                        <th class="py-3 px-6 text-left">Fabricante</th>
+                        <th class="py-3 px-6 text-center">Promoção</th>
+                        <th class="py-3 px-6 text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="medicamentos-table-body" class="text-gray-700 text-sm">
+                    <!-- Linhas da tabela serão inseridas aqui via JS -->
+                    <!-- Exemplo de linha (remover após JS funcionar) -->
+                    <tr class="border-b border-gray-200">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">Dorflexol Extra Power</td>
+                        <td class="py-3 px-6 text-left">Flexina Dorada</td>
+                        <td class="py-3 px-6 text-left">Manipulado</td>
+                        <td class="py-3 px-6 text-right">R$ 19,90</td>
+                        <td class="py-3 px-6 text-center">42</td>
+                        <td class="py-3 px-6 text-left">Farmabizarra</td>
+                        <td class="py-3 px-6 text-center">
+                            <span class="bg-red-200 text-red-700 py-1 px-3 rounded-full text-xs">Não</span>
+                            <!-- ou <span class="bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs">Sim</span> -->
+                        </td>
+                        <td class="py-3 px-6 text-center">
+                            <div class="flex item-center justify-center">
+                                <button class="w-6 h-6 mr-2 text-blue-500 hover:text-blue-700 transform hover:scale-110">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                </button>
+                                <button class="w-6 h-6 text-red-500 hover:text-red-700 transform hover:scale-110">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Fim do exemplo -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginação (se necessário) -->
+        <div class="mt-6 flex justify-center">
+            <!-- Controles de paginação aqui -->
+        </div>
+
+    </main>
+
+    <!-- Modal para Adicionar/Editar Medicamento (será criado/controlado via JS) -->
+    <div id="medicamento-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
+        <div class="relative mx-auto p-8 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <h3 id="modal-title" class="text-2xl font-semibold mb-6">Adicionar Medicamento</h3>
+            <form id="medicamento-form">
+                <input type="hidden" id="medicamento-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                    <div>
+                        <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                        <input type="text" id="nome" name="nome" required class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label for="principioAtivo" class="block text-sm font-medium text-gray-700 mb-1">Princípio Ativo</label>
+                        <input type="text" id="principioAtivo" name="principioAtivo" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                    </div>
+                     <div>
+                        <label for="tipo" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                        <input type="text" id="tipo" name="tipo" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                    </div>
+                     <div>
+                        <label for="fabricante" class="block text-sm font-medium text-gray-700 mb-1">Fabricante</label>
+                        <input type="text" id="fabricante" name="fabricante" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                    </div>
+                     <div>
+                        <label for="preco" class="block text-sm font-medium text-gray-700 mb-1">Preço (R$)</label>
+                        <input type="number" id="preco" name="preco" step="0.01" min="0" required class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                    </div>
+                     <div>
+                        <label for="estoqueAtual" class="block text-sm font-medium text-gray-700 mb-1">Estoque Atual</label>
+                        <input type="number" id="estoqueAtual" name="estoqueAtual" min="0" required class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                    </div>
+                     <div class="md:col-span-2">
+                        <label for="promocaoAtiva" class="block text-sm font-medium text-gray-700 mb-1">Promoção Ativa?</label>
+                        <select id="promocaoAtiva" name="promocaoAtiva" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                            <option value="0">Não</option>
+                            <option value="1">Sim</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="modal-error-message" class="text-red-500 text-sm mb-4" style="display: none;"></div>
+                <div class="flex justify-end space-x-4 mt-8">
+                    <button type="button" id="cancel-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Cancelar</button>
+                    <button type="submit" id="save-button" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script para funcionalidades do Estoque -->
+    <script src="estoque_script.js"></script> 
+</body>
+</html>
+
