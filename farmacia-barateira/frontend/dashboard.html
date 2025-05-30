@@ -131,6 +131,21 @@
 
     <!-- Script para funcionalidades do Dashboard (ex: logout, carregar dados) -->
     <script src="dashboard_script.js"></script> 
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Página carregada: " + document.title);
+  
+  // Garantir que os links do menu funcionem
+  document.querySelectorAll('aside a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      console.log("Clicou em: " + this.href);
+      // Não previne o comportamento padrão para permitir a navegação
+    });
+  });
+});
+</script>
+<script src="fix_menu.js"></script>
+
 </body>
 </html>
 

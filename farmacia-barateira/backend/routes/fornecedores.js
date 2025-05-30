@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
-// Ajuste o caminho se necessário
-const Fornecedor = require("../models/fornecedorModel"); 
+const Fornecedor = require("../models/fornecedorModel");
+const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
+
+// --- Permissões Definidas ---
+// Listar/Buscar: Gerente, Administrador (Acesso a dados de compras/fornecedores)
+// Cadastrar/Atualizar/Deletar: Gerente, Administrador (Gerenciamento de fornecedores)
 
 // Rota para LISTAR todos os fornecedores (GET /api/fornecedores)
-router.get("/", (req, res) => {
+router.get("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   Fornecedor.listarTodos((err, fornecedores) => {
     if (err) {
       console.error("Erro ao listar fornecedores:", err);
@@ -15,7 +19,7 @@ router.get("/", (req, res) => {
 });
 
 // Rota para BUSCAR um fornecedor por ID (GET /api/fornecedores/:id)
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   Fornecedor.buscarPorId(id, (err, fornecedor) => {
     if (err) {
@@ -30,19 +34,16 @@ router.get("/:id", (req, res) => {
 });
 
 // Rota para CADASTRAR um novo fornecedor (POST /api/fornecedores)
-router.post("/", (req, res) => {
+router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const dadosFornecedor = req.body;
 
-  // Validação básica (nome é obrigatório)
   if (!dadosFornecedor.nome) {
     return res.status(400).json({ erro: "Nome do fornecedor é obrigatório." });
   }
-  // Poderia adicionar validação de formato de CNPJ aqui
 
   Fornecedor.cadastrar(dadosFornecedor, (err, result) => {
     if (err) {
       console.error("Erro ao cadastrar fornecedor:", err);
-      // Verifica erro de CNPJ único (do Model)
       if (err.message && err.message.includes("CNPJ já cadastrado")) {
         return res.status(409).json({ erro: err.message });
       }
@@ -53,20 +54,17 @@ router.post("/", (req, res) => {
 });
 
 // Rota para ATUALIZAR um fornecedor por ID (PUT /api/fornecedores/:id)
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   const dadosFornecedor = req.body;
 
-  // Validação: não permitir atualizar nome para vazio
   if (dadosFornecedor.nome === "") {
       return res.status(400).json({ erro: "Nome do fornecedor não pode ser vazio." });
   }
-  // Poderia adicionar validação de formato de CNPJ aqui
 
   Fornecedor.atualizar(id, dadosFornecedor, (err, result) => {
     if (err) {
       console.error(`Erro ao atualizar fornecedor ${id}:`, err);
-      // Verifica erro de CNPJ único (do Model)
       if (err.message && err.message.includes("CNPJ já cadastrado")) {
         return res.status(409).json({ erro: err.message });
       }
@@ -83,13 +81,12 @@ router.put("/:id", (req, res) => {
 });
 
 // Rota para DELETAR um fornecedor por ID (DELETE /api/fornecedores/:id)
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
 
   Fornecedor.deletar(id, (err, result) => {
     if (err) {
       console.error(`Erro ao deletar fornecedor ${id}:`, err);
-      // Verifica erro de FK (do Model)
       if (err.message && err.message.includes("compras associadas")) {
           return res.status(409).json({ erro: err.message });
       }

@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
 
 // Importar os modelos necessários
 const VendaItens = require("../models/vendaItensModel");
-// Poderíamos precisar do Venda e Medicamento para lógicas mais complexas (ex: recalcular total, reverter estoque)
-// const Venda = require("../models/vendaModel");
-// const Medicamento = require("../models/medicamentoModel_atualizado");
+
+// --- Permissões Definidas ---
+// Operações em itens individuais de venda são complexas e podem desalinhar totais/estoque.
+// Permitir apenas para Gerente e Administrador.
 
 // Rota para BUSCAR um item de venda específico por ID (GET /api/venda_itens/:id)
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   VendaItens.buscarPorId(id, (err, item) => {
     if (err) {
@@ -23,26 +25,17 @@ router.get("/:id", (req, res) => {
 });
 
 // Rota para ATUALIZAR um item de venda por ID (PUT /api/venda_itens/:id)
-// ATENÇÃO: Atualizar um item individualmente pode ter implicações complexas
-// na venda geral (valor total) e no estoque. Esta é uma implementação básica.
-router.put("/:id", (req, res) => {
+// ATENÇÃO: Lógica simplificada. Não atualiza estoque nem total da venda.
+router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   const dadosItem = req.body; // Espera { quantidade, precoUnitario }
 
-  // Validações básicas
   if (dadosItem.quantidade !== undefined && (isNaN(parseInt(dadosItem.quantidade)) || parseInt(dadosItem.quantidade) <= 0)) {
     return res.status(400).json({ erro: "Quantidade inválida." });
   }
   if (dadosItem.precoUnitario !== undefined && (isNaN(parseFloat(dadosItem.precoUnitario)) || parseFloat(dadosItem.precoUnitario) < 0)) {
     return res.status(400).json({ erro: "Preço unitário inválido." });
   }
-
-  // Lógica Simplificada: Apenas atualiza o item.
-  // Em um sistema real, seria necessário:
-  // 1. Buscar o item antigo para saber a diferença de quantidade/preço.
-  // 2. Atualizar o estoque (se a quantidade mudou).
-  // 3. Recalcular e atualizar o valorTotal na tabela 'vendas'.
-  // Tudo isso dentro de uma transação.
 
   VendaItens.atualizar(id, dadosItem, (err, result) => {
     if (err) {
@@ -60,16 +53,9 @@ router.put("/:id", (req, res) => {
 });
 
 // Rota para DELETAR um item de venda por ID (DELETE /api/venda_itens/:id)
-// ATENÇÃO: Deletar um item individualmente tem implicações complexas.
-router.delete("/:id", (req, res) => {
+// ATENÇÃO: Lógica simplificada. Não restaura estoque nem atualiza total da venda.
+router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
-
-  // Lógica Simplificada: Apenas deleta o item.
-  // Em um sistema real, seria necessário:
-  // 1. Buscar o item antes de deletar para saber qual medicamento/quantidade era.
-  // 2. Restaurar o estoque daquele medicamento.
-  // 3. Recalcular e atualizar o valorTotal na tabela 'vendas'.
-  // Tudo isso dentro de uma transação.
 
   VendaItens.deletar(id, (err, result) => {
     if (err) {
@@ -82,9 +68,6 @@ router.delete("/:id", (req, res) => {
     res.json({ mensagem: "Item de venda deletado com sucesso! (Atenção: Valor total da venda e estoque precisam ser ajustados manualmente/separadamente)" });
   });
 });
-
-// Não faz sentido ter um POST aqui, pois itens são criados junto com a venda principal.
-// A rota GET para listar todos os itens de UMA venda específica já está em vendas_route.js.
 
 module.exports = router;
 

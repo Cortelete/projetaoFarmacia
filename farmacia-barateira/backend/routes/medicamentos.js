@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-// Ajuste o caminho se necessário para o modelo correto
-const Medicamento = require("../models/medicamentoModel"); 
-const db = require("../database/db"); // Mantido para o PUT antigo, mas idealmente seria removido
+const Medicamento = require("../models/medicamentoModel");
+const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
+
+// --- Permissões Definidas ---
+// Listar/Buscar: Funcionário, Gerente, Administrador (Todos precisam ver o estoque)
+// Cadastrar/Atualizar/Deletar: Gerente, Administrador (Controle de estoque)
 
 // Rota para LISTAR todos os medicamentos (GET /api/medicamentos)
-router.get("/", (req, res) => {
+router.get("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
   Medicamento.listarTodos((err, medicamentos) => {
     if (err) {
       console.error("Erro ao listar medicamentos:", err);
@@ -16,7 +19,7 @@ router.get("/", (req, res) => {
 });
 
 // Rota para BUSCAR um medicamento por ID (GET /api/medicamentos/:id)
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   Medicamento.buscarPorId(id, (err, medicamento) => {
     if (err) {
@@ -31,10 +34,9 @@ router.get("/:id", (req, res) => {
 });
 
 // Rota para CADASTRAR um novo medicamento (POST /api/medicamentos)
-router.post("/", (req, res) => {
+router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const dadosMed = req.body;
 
-  // Validação básica de entrada
   if (!dadosMed.nome || dadosMed.preco === undefined || dadosMed.estoqueAtual === undefined) {
     return res.status(400).json({ erro: "Nome, preço e estoque atual são obrigatórios." });
   }
@@ -55,12 +57,11 @@ router.post("/", (req, res) => {
 });
 
 // Rota para ATUALIZAR um medicamento por ID (PUT /api/medicamentos/:id)
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   const dadosMed = req.body;
 
-   // Validação básica de entrada para atualização
-  if (dadosMed.preco !== undefined && (isNaN(parseFloat(dadosMed.preco)) || parseFloat(dadosMed.preco) < 0)) {
+   if (dadosMed.preco !== undefined && (isNaN(parseFloat(dadosMed.preco)) || parseFloat(dadosMed.preco) < 0)) {
       return res.status(400).json({ erro: "Preço inválido." });
   }
    if (dadosMed.estoqueAtual !== undefined && (isNaN(parseInt(dadosMed.estoqueAtual)) || parseInt(dadosMed.estoqueAtual) < 0)) {
@@ -79,8 +80,6 @@ router.put("/:id", (req, res) => {
       return res.status(500).json({ erro: "Erro interno ao atualizar medicamento." });
     }
     if (result.changes === 0) {
-      // Pode ser que o medicamento não exista ou nenhum dado foi alterado
-      // Para diferenciar, poderíamos buscar o ID primeiro, mas por simplicidade:
       return res.status(404).json({ erro: "Medicamento não encontrado ou nenhum dado alterado." });
     }
     res.json({ mensagem: "Medicamento atualizado com sucesso!" });
@@ -88,13 +87,12 @@ router.put("/:id", (req, res) => {
 });
 
 // Rota para DELETAR um medicamento por ID (DELETE /api/medicamentos/:id)
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
 
   Medicamento.deletar(id, (err, result) => {
     if (err) {
       console.error(`Erro ao deletar medicamento ${id}:`, err);
-      // Verifica erro de restrição de chave estrangeira (medicamento em venda_itens ou compra_itens)
       if (err.message && err.message.includes("FOREIGN KEY constraint failed")) {
           return res.status(409).json({ erro: "Não é possível deletar o medicamento pois ele possui vendas ou compras associadas." });
       }
@@ -107,45 +105,7 @@ router.delete("/:id", (req, res) => {
   });
 });
 
-
-// Rota PUT antiga (baseada em nome) - CONSIDERAR REMOVER OU ADAPTAR
-// Esta rota não segue o padrão REST por usar 'nome' no corpo para identificar o recurso
-// e por atualizar apenas campos específicos ('estoqueAtual', 'fabricante').
-// Mantida por compatibilidade com o código original, mas idealmente seria substituída pelo PUT /:id.
-/*
-router.put('/', (req, res) => {
-  const { nome, campo, valor } = req.body;
-  const camposPermitidos = ['estoqueAtual', 'fabricante']; // Adicionar 'preco', 'promocaoAtiva'?
-
-  if (!nome || !campo || valor === undefined) {
-      return res.status(400).json({ erro: 'Nome, campo e valor são obrigatórios.' });
-  }
-
-  if (!camposPermitidos.includes(campo)) {
-    return res.status(400).json({ erro: 'Campo inválido para atualização via esta rota.' });
-  }
-
-  // Validação específica para estoque e preço (se adicionado)
-  if (campo === 'estoqueAtual' && (isNaN(parseInt(valor)) || parseInt(valor) < 0)) {
-      return res.status(400).json({ erro: 'Valor inválido para estoque atual.' });
-  }
-  // Adicionar validação para preço e promocaoAtiva se incluídos nos camposPermitidos
-
-  // Usar db.run diretamente como no original - NÃO RECOMENDADO
-  // O ideal seria ter uma função no Model: Medicamento.atualizarPorNome(nome, { [campo]: valor }, callback)
-  db.run(
-    `UPDATE medicamentos SET ${campo} = ? WHERE nome = ?`,
-    [valor, nome],
-    function (err) {
-      if (err) return res.status(500).json({ erro: err.message });
-      if (this.changes === 0) {
-          return res.status(404).json({ erro: 'Medicamento não encontrado com este nome.' });
-      }
-      res.json({ mensagem: 'Atualizado com sucesso (via rota antiga)' });
-    }
-  );
-});
-*/
+// A rota PUT antiga baseada em nome foi comentada no arquivo original e permanecerá assim.
 
 module.exports = router;
 

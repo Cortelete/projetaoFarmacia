@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Farmácia A Barateira</title>
+    <!-- Incluindo Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones (Heroicons via CDN) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/heroicons/2.1.3/24/outline/heroicons.min.css" rel="stylesheet">
+    <!-- Link para CSS customizado -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Emoji CSS -->
+    <link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Estilo para esconder/mostrar submenus */
+        .submenu { display: none; }
+        .menu-item:hover .submenu { display: block; }
+        /* Estilos adicionais para cards */
+        .relatorio-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body class="bg-gray-100 flex">
+
+    <!-- Sidebar (Mesma estrutura para consistência) -->
+    <aside class="w-64 bg-gradient-to-b from-blue-600 to-cyan-600 text-white flex flex-col min-h-screen p-4 shadow-lg">
+        <div class="flex items-center mb-8">
+            <svg class="h-8 w-8 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /> 
+            </svg>
+            <h1 class="text-xl font-bold">A Barateira</h1>
+        </div>
+        <nav class="flex-1">
+             <ul>
+                <li class="mb-4 menu-item"><a href="dashboard.html" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>Início</a></li>
+                <li class="mb-4 menu-item">
+                    <a href="vendas.html" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Vendas</a>
+                    <ul class="submenu ml-4 mt-2">
+                        <li><a href="vendas.html" class="block p-1 hover:bg-cyan-800 rounded">Nova Venda</a></li>
+                        <li><a href="historico-vendas.html" class="block p-1 hover:bg-cyan-800 rounded">Histórico</a></li>
+                    </ul>
+                </li>
+                <li class="mb-4 menu-item">
+                    <a href="estoque.html" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>Estoque</a>
+                     <ul class="submenu ml-4 mt-2">
+                        <li><a href="estoque.html" class="block p-1 hover:bg-cyan-800 rounded">Visualizar</a></li>
+                        <li><a href="estoque.html" class="block p-1 hover:bg-cyan-800 rounded">Cadastrar Medicamento</a></li>
+                        <li><a href="compras.html" class="block p-1 hover:bg-cyan-800 rounded">Registrar Compra</a></li>
+                    </ul>
+                </li>
+                <li class="mb-4 menu-item">
+                    <a href="clientes.html" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.197-5.986" /></svg>Clientes</a>
+                </li>
+                <li class="mb-4 menu-item">
+                    <a href="fornecedores.html" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>Fornecedores</a>
+                </li>
+                <li class="mb-4 menu-item bg-cyan-700 rounded"> <!-- Item ativo -->
+                    <a href="relatorios.html" class="flex items-center p-2 rounded"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-3-5v5m-3-8v8M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H7a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>Relatórios</a>
+                </li>
+                <li class="mb-4 menu-item"><a href="configuracoes.html" class="flex items-center p-2 rounded hover:bg-cyan-700"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>Configurações</a></li>
+            </ul>
+        </nav>
+        <div class="mt-auto">
+            <button id="logout-button" class="flex items-center w-full p-2 rounded text-red-300 hover:bg-red-700 hover:text-white"><svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>Sair</button>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 p-8 overflow-x-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700">Relatórios e Análises 📊</h2>
+            <div class="flex space-x-2">
+                <button id="exportar-pdf-button" 
+                        class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
+                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    Exportar PDF
+                </button>
+                <button id="exportar-excel-button" 
+                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
+                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Exportar Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtros de Relatório -->
+        <div class="bg-white p-5 rounded-lg shadow mb-6">
+            <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+                <span class="mr-2">Filtros</span>
+                <span class="text-xl">🔍</span>
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="tipo-relatorio" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Relatório</label>
+                    <select id="tipo-relatorio" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                        <option value="vendas">Vendas</option>
+                        <option value="estoque">Estoque</option>
+                        <option value="clientes">Clientes</option>
+                        <option value="financeiro">Financeiro</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Período</label>
+                    <select id="periodo" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                        <option value="hoje">Hoje</option>
+                        <option value="semana">Última Semana</option>
+                        <option value="mes" selected>Último Mês</option>
+                        <option value="trimestre">Último Trimestre</option>
+                        <option value="ano">Último Ano</option>
+                        <option value="personalizado">Personalizado</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="data-inicio" class="block text-sm font-medium text-gray-700 mb-1">Data Início</label>
+                    <input type="date" id="data-inicio" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                </div>
+                <div>
+                    <label for="data-fim" class="block text-sm font-medium text-gray-700 mb-1">Data Fim</label>
+                    <input type="date" id="data-fim" class="shadow-sm focus:ring-cyan-500 focus:border-cyan-500 block w-full sm:text-sm border-gray-300 rounded-md p-2">
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button id="gerar-relatorio-button" 
+                        class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out flex items-center">
+                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    Gerar Relatório
+                </button>
+            </div>
+        </div>
+
+        <!-- Cards de Resumo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow relatorio-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-600 mb-2">Total de Vendas</h3>
+                        <p class="text-3xl font-bold text-blue-600">R$ 45.789,50</p>
+                    </div>
+                    <div class="text-3xl">💰</div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center">
+                        <span class="text-green-500 flex items-center text-sm">
+                            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                            </svg>
+                            12.5%
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">vs. mês anterior</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow relatorio-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-600 mb-2">Número de Vendas</h3>
+                        <p class="text-3xl font-bold text-purple-600">387</p>
+                    </div>
+                    <div class="text-3xl">🛒</div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center">
+                        <span class="text-green-500 flex items-center text-sm">
+                            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                            </svg>
+                            8.3%
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">vs. mês anterior</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow relatorio-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-600 mb-2">Ticket Médio</h3>
+                        <p class="text-3xl font-bold text-orange-500">R$ 118,32</p>
+                    </div>
+                    <div class="text-3xl">🎫</div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center">
+                        <span class="text-red-500 flex items-center text-sm">
+                            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                            2.1%
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">vs. mês anterior</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow relatorio-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-600 mb-2">Novos Clientes</h3>
+                        <p class="text-3xl font-bold text-green-600">42</p>
+                    </div>
+                    <div class="text-3xl">👥</div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center">
+                        <span class="text-green-500 flex items-center text-sm">
+                            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                            </svg>
+                            15.7%
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">vs. mês anterior</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Gráfico de Vendas por Período -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-700 mb-4">Vendas por Período</h3>
+                <div class="h-80">
+                    <canvas id="vendasChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de Produtos Mais Vendidos -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-700 mb-4">Produtos Mais Vendidos</h3>
+                <div class="h-80">
+                    <canvas id="produtosChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Dados -->
+        <div class="bg-white p-6 rounded-lg shadow mb-8">
+            <h3 class="text-lg font-medium text-gray-700 mb-4">Detalhamento de Vendas</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full leading-normal">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-600 uppercase text-xs leading-normal">
+                            <th class="py-3 px-6 text-left">ID</th>
+                            <th class="py-3 px-6 text-left">Data</th>
+                            <th class="py-3 px-6 text-left">Cliente</th>
+                            <th class="py-3 px-6 text-left">Vendedor</th>
+                            <th class="py-3 px-6 text-right">Itens</th>
+                            <th class="py-3 px-6 text-right">Total</th>
+                            <th class="py-3 px-6 text-center">Pagamento</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700 text-sm">
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-6 text-left">#12345</td>
+                            <td class="py-3 px-6 text-left">30/05/2025</td>
+                            <td class="py-3 px-6 text-left">Maria Silva</td>
+                            <td class="py-3 px-6 text-left">João Farmacêutico</td>
+                            <td class="py-3 px-6 text-right">3</td>
+                            <td class="py-3 px-6 text-right font-medium">R$ 24,48</td>
+                            <td class="py-3 px-6 text-center">
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Cartão de Crédito</span>
+                            </td>
+                        </tr>
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-6 text-left">#12344</td>
+                            <td class="py-3 px-6 text-left">30/05/2025</td>
+                            <td class="py-3 px-6 text-left">João Santos</td>
+                            <td class="py-3 px-6 text-left">Ana Farmacêutica</td>
+                            <td class="py-3 px-6 text-right">5</td>
+                            <td class="py-3 px-6 text-right font-medium">R$ 87,50</td>
+                            <td class="py-3 px-6 text-center">
+                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">PIX</span>
+                            </td>
+                        </tr>
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-6 text-left">#12343</td>
+                            <td class="py-3 px-6 text-left">29/05/2025</td>
+                            <td class="py-3 px-6 text-left">Ana Oliveira</td>
+                            <td class="py-3 px-6 text-left">João Farmacêutico</td>
+                            <td class="py-3 px-6 text-right">2</td>
+                            <td class="py-3 px-6 text-right font-medium">R$ 45,90</td>
+                            <td class="py-3 px-6 text-center">
+                                <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Dinheiro</span>
+                            </td>
+                        </tr>
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-6 text-left">#12342</td>
+                            <td class="py-3 px-6 text-left">29/05/2025</td>
+                            <td class="py-3 px-6 text-left">Carlos Mendes</td>
+                            <td class="py-3 px-6 text-left">Ana Farmacêutica</td>
+                            <td class="py-3 px-6 text-right">7</td>
+                            <td class="py-3 px-6 text-right font-medium">R$ 132,75</td>
+                            <td class="py-3 px-6 text-center">
+                                <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">Cartão de Débito</span>
+                            </td>
+                        </tr>
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-6 text-left">#12341</td>
+                            <td class="py-3 px-6 text-left">28/05/2025</td>
+                            <td class="py-3 px-6 text-left">Fernanda Costa</td>
+                            <td class="py-3 px-6 text-left">João Farmacêutico</td>
+                            <td class="py-3 px-6 text-right">4</td>
+                            <td class="py-3 px-6 text-right font-medium">R$ 67,80</td>
+                            <td class="py-3 px-6 text-center">
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Cartão de Crédito</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 flex justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    Mostrando 5 de 387 registros
+                </div>
+                <div class="flex">
+                    <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-l hover:bg-gray-300">Anterior</button>
+                    <button class="px-3 py-1 bg-cyan-600 text-white">1</button>
+                    <button class="px-3 py-1 bg-gray-200 text-gray-700 hover:bg-gray-300">2</button>
+                    <button class="px-3 py-1 bg-gray-200 text-gray-700 hover:bg-gray-300">3</button>
+                    <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-r hover:bg-gray-300">Próximo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relatórios Favoritos -->
+        <div class="bg-white p-6 rounded-lg shadow mb-8">
+            <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+                <span class="mr-2">Relatórios Favoritos</span>
+                <span class="text-xl">⭐</span>
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-medium text-gray-800">Vendas Mensais</h4>
+                        <span class="text-yellow-500">⭐</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">Relatório detalhado de vendas do último mês</p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-xs text-gray-500">Última execução: 28/05/2025</span>
+                        <button class="text-cyan-600 hover:text-cyan-800 text-sm">Executar</button>
+                    </div>
+                </div>
+                <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-medium text-gray-800">Estoque Crítico</h4>
+                        <span class="text-yellow-500">⭐</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">Produtos com estoque abaixo do mínimo</p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-xs text-gray-500">Última execução: 29/05/2025</span>
+                        <button class="text-cyan-600 hover:text-cyan-800 text-sm">Executar</button>
+                    </div>
+                </div>
+                <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-medium text-gray-800">Desempenho de Vendedores</h4>
+                        <span class="text-yellow-500">⭐</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">Análise de performance da equipe de vendas</p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-xs text-gray-500">Última execução: 25/05/2025</span>
+                        <button class="text-cyan-600 hover:text-cyan-800 text-sm">Executar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Script para funcionalidades da página de Relatórios -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuração do gráfico de vendas
+            const vendasCtx = document.getElementById('vendasChart').getContext('2d');
+            const vendasChart = new Chart(vendasCtx, {
+                type: 'line',
+                data: {
+                    labels: ['01/05', '05/05', '10/05', '15/05', '20/05', '25/05', '30/05'],
+                    datasets: [{
+                        label: 'Vendas (R$)',
+                        data: [5200, 6100, 4800, 7300, 6500, 8200, 7600],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'R$ ' + context.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Configuração do gráfico de produtos
+            const produtosCtx = document.getElementById('produtosChart').getContext('2d');
+            const produtosChart = new Chart(produtosCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Paracetamol', 'Vitamina C', 'Dorflexol', 'Amoxicilina', 'Dipirona'],
+                    datasets: [{
+                        label: 'Unidades Vendidas',
+                        data: [120, 95, 85, 70, 65],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(139, 92, 246, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Lógica para os filtros de data
+            const periodoSelect = document.getElementById('periodo');
+            const dataInicio = document.getElementById('data-inicio');
+            const dataFim = document.getElementById('data-fim');
+
+            // Desabilitar campos de data por padrão
+            dataInicio.disabled = true;
+            dataFim.disabled = true;
+
+            periodoSelect.addEventListener('change', function() {
+                if (this.value === 'personalizado') {
+                    dataInicio.disabled = false;
+                    dataFim.disabled = false;
+                } else {
+                    dataInicio.disabled = true;
+                    dataFim.disabled = true;
+                }
+            });
+
+            // Configurar datas padrão (último mês)
+            const hoje = new Date();
+            const umMesAtras = new Date();
+            umMesAtras.setMonth(hoje.getMonth() - 1);
+            
+            dataFim.valueAsDate = hoje;
+            dataInicio.valueAsDate = umMesAtras;
+        });
+    </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Página carregada: " + document.title);
+  
+  // Garantir que os links do menu funcionem
+  document.querySelectorAll('aside a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      console.log("Clicou em: " + this.href);
+      // Não previne o comportamento padrão para permitir a navegação
+    });
+  });
+});
+</script>
+<script src="fix_menu.js"></script>
+
+</body>
+</html>

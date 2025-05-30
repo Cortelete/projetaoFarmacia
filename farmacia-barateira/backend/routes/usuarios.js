@@ -1,45 +1,51 @@
 const express = require("express");
 const router = express.Router();
-// Ajuste o caminho se necessário para o modelo correto
-const Usuario = require("../models/usuarioModel"); 
+const Usuario = require("../models/usuarioModel");
+const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
+
+// --- Rotas Protegidas ---
 
 // Rota para CADASTRAR um novo usuário (POST /api/usuarios)
-// Mantendo a rota original que você tinha, mas usando o modelo atualizado
-router.post("/", (req, res) => { // Alterado de /cadastrar para / seguindo padrão REST
+// Apenas Administradores podem cadastrar novos usuários
+router.post("/", verifyToken, checkRole(["Administrador"]), (req, res) => {
   const { nome, email, senha, cargo } = req.body;
 
-  // Validação básica de entrada
-  if (!nome || !email || !senha) {
-    return res.status(400).json({ erro: "Nome, email e senha são obrigatórios." });
+  if (!nome || !email || !senha || !cargo) { // Cargo também é obrigatório agora
+    return res.status(400).json({ erro: "Nome, email, senha e cargo são obrigatórios." });
+  }
+  // Validar se o cargo fornecido é um dos permitidos (opcional, mas bom)
+  const cargosValidos = ["Administrador", "Gerente", "Funcionario"];
+  if (!cargosValidos.includes(cargo)) {
+      return res.status(400).json({ erro: `Cargo inválido. Cargos permitidos: ${cargosValidos.join(', ')}` });
   }
 
   Usuario.cadastrar({ nome, email, senha, cargo }, (err, result) => {
     if (err) {
       console.error("Erro ao cadastrar usuário:", err);
-      // Verifica erro de email único
       if (err.message && err.message.includes("UNIQUE constraint failed: usuarios.email")) {
         return res.status(409).json({ erro: "Este email já está cadastrado." });
       }
       return res.status(500).json({ erro: "Erro interno ao cadastrar usuário." });
     }
-    // Retorna o ID do usuário criado e uma mensagem de sucesso
     res.status(201).json({ mensagem: "Usuário cadastrado com sucesso!", usuarioId: result.id });
   });
 });
 
 // Rota para LISTAR todos os usuários (GET /api/usuarios)
-router.get("/", (req, res) => {
+// Administradores e Gerentes podem listar usuários
+router.get("/", verifyToken, checkRole(["Administrador", "Gerente"]), (req, res) => {
   Usuario.listarTodos((err, usuarios) => {
     if (err) {
       console.error("Erro ao listar usuários:", err);
       return res.status(500).json({ erro: "Erro interno ao buscar usuários." });
     }
-    res.json(usuarios); // Retorna a lista de usuários (sem senhas)
+    res.json(usuarios);
   });
 });
 
 // Rota para BUSCAR um usuário por ID (GET /api/usuarios/:id)
-router.get("/:id", (req, res) => {
+// Administradores e Gerentes podem buscar usuários por ID
+router.get("/:id", verifyToken, checkRole(["Administrador", "Gerente"]), (req, res) => {
   const { id } = req.params;
   Usuario.buscarPorId(id, (err, usuario) => {
     if (err) {
@@ -49,29 +55,35 @@ router.get("/:id", (req, res) => {
     if (!usuario) {
       return res.status(404).json({ erro: "Usuário não encontrado." });
     }
-    res.json(usuario); // Retorna o usuário encontrado (sem senha)
+    res.json(usuario);
   });
 });
 
 // Rota para ATUALIZAR um usuário por ID (PUT /api/usuarios/:id)
-router.put("/:id", (req, res) => {
+// Apenas Administradores podem atualizar usuários
+router.put("/:id", verifyToken, checkRole(["Administrador"]), (req, res) => {
   const { id } = req.params;
-  const dadosUsuario = req.body; // Contém os campos a serem atualizados (nome, email, senha, cargo)
+  const dadosUsuario = req.body;
 
-  // Validação: não permitir atualizar para campos vazios se eles forem obrigatórios
-  if (dadosUsuario.nome === "" || dadosUsuario.email === "" || dadosUsuario.senha === "") {
-      return res.status(400).json({ erro: "Campos obrigatórios não podem ser vazios." });
+  // Validar se o cargo fornecido (se houver) é válido
+  if (dadosUsuario.cargo) {
+      const cargosValidos = ["Administrador", "Gerente", "Funcionario"];
+      if (!cargosValidos.includes(dadosUsuario.cargo)) {
+          return res.status(400).json({ erro: `Cargo inválido. Cargos permitidos: ${cargosValidos.join(', ')}` });
+      }
   }
+
+  // Remover campos vazios para não atualizar com vazio, exceto se for intencional (ex: senha)
+  // No model atual, ele já ignora undefined, então não precisamos remover aqui explicitamente
+  // Mas a validação de campos obrigatórios vazios pode ser feita aqui se necessário
 
   Usuario.atualizar(id, dadosUsuario, (err, result) => {
     if (err) {
       console.error(`Erro ao atualizar usuário ${id}:`, err);
-       // Verifica erro de email único
       if (err.message && err.message.includes("UNIQUE constraint failed: usuarios.email")) {
         return res.status(409).json({ erro: "Este email já pertence a outro usuário." });
       }
-      // Verifica erro de nenhum campo fornecido (do Model)
-       if (err.message && err.message.includes("Nenhum campo para atualizar")) {
+      if (err.message && err.message.includes("Nenhum campo para atualizar")) {
            return res.status(400).json({ erro: err.message });
        }
       return res.status(500).json({ erro: "Erro interno ao atualizar usuário." });
@@ -84,15 +96,21 @@ router.put("/:id", (req, res) => {
 });
 
 // Rota para DELETAR um usuário por ID (DELETE /api/usuarios/:id)
-router.delete("/:id", (req, res) => {
+// Apenas Administradores podem deletar usuários
+router.delete("/:id", verifyToken, checkRole(["Administrador"]), (req, res) => {
   const { id } = req.params;
+
+  // Adicionar verificação para não permitir que o admin se delete (opcional)
+  // if (req.user.id === parseInt(id)) { // req.user.id vem do token JWT
+  //   return res.status(403).json({ erro: "Você não pode deletar sua própria conta." });
+  // }
 
   Usuario.deletar(id, (err, result) => {
     if (err) {
       console.error(`Erro ao deletar usuário ${id}:`, err);
-       // Verifica erro de restrição de chave estrangeira (usuário com vendas)
       if (err.message && err.message.includes("FOREIGN KEY constraint failed")) {
-          return res.status(409).json({ erro: "Não é possível deletar o usuário pois ele possui vendas associadas." });
+          // A mensagem de erro pode variar dependendo do que está associado
+          return res.status(409).json({ erro: "Não é possível deletar o usuário pois ele possui registros associados (ex: vendas, compras)." });
       }
       return res.status(500).json({ erro: "Erro interno ao deletar usuário." });
     }
@@ -105,3 +123,26 @@ router.delete("/:id", (req, res) => {
 
 module.exports = router;
 
+// Rota para registro de novos usuários
+router.post('/registro', async (req, res) => {
+  try {
+    const { nome, email, senha, cargo } = req.body;
+    
+    // Verificar se o usuário já existe
+    const usuarioExistente = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
+    if (usuarioExistente.length > 0) {
+      return res.status(400).json({ message: 'Este email já está cadastrado' });
+    }
+    
+    // Criar novo usuário
+    await db.query(
+      'INSERT INTO usuarios (nome, email, senha, cargo) VALUES (?, ?, ?, ?)',
+      [nome, email, senha, cargo]
+    );
+    
+    res.status(201).json({ message: 'Usuário criado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao registrar usuário:', error);
+    res.status(500).json({ message: 'Erro ao registrar usuário' });
+  }
+});

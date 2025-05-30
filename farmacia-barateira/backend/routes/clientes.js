@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
-// Ajuste o caminho se necessário
-const Cliente = require("../models/clienteModel"); 
+const Cliente = require("../models/clienteModel");
+const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
+
+// --- Permissões Definidas ---
+// Listar/Buscar/Cadastrar: Funcionário, Gerente, Administrador
+// Atualizar/Deletar: Gerente, Administrador
 
 // Rota para LISTAR todos os clientes (GET /api/clientes)
-router.get("/", (req, res) => {
+router.get("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
   Cliente.listarTodos((err, clientes) => {
     if (err) {
       console.error("Erro ao listar clientes:", err);
@@ -15,7 +19,7 @@ router.get("/", (req, res) => {
 });
 
 // Rota para BUSCAR um cliente por ID (GET /api/clientes/:id)
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   Cliente.buscarPorId(id, (err, cliente) => {
     if (err) {
@@ -30,10 +34,9 @@ router.get("/:id", (req, res) => {
 });
 
 // Rota para CADASTRAR um novo cliente (POST /api/clientes)
-router.post("/", (req, res) => {
+router.post("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
   const dadosCliente = req.body;
 
-  // Validação básica (nome é obrigatório pela tabela)
   if (!dadosCliente.nome) {
     return res.status(400).json({ erro: "Nome do cliente é obrigatório." });
   }
@@ -48,11 +51,10 @@ router.post("/", (req, res) => {
 });
 
 // Rota para ATUALIZAR um cliente por ID (PUT /api/clientes/:id)
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   const dadosCliente = req.body;
 
-  // Validação: não permitir atualizar nome para vazio
   if (dadosCliente.nome === "") {
       return res.status(400).json({ erro: "Nome do cliente não pode ser vazio." });
   }
@@ -73,20 +75,18 @@ router.put("/:id", (req, res) => {
 });
 
 // Rota para DELETAR um cliente por ID (DELETE /api/clientes/:id)
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
 
   Cliente.deletar(id, (err, result) => {
     if (err) {
       console.error(`Erro ao deletar cliente ${id}:`, err);
-      // O modelo já lida com a lógica ON DELETE SET NULL, então não deve haver erro de FK aqui
       return res.status(500).json({ erro: "Erro interno ao deletar cliente." });
     }
     if (result.changes === 0) {
       return res.status(404).json({ erro: "Cliente não encontrado para deleção." });
     }
-    // Informar sobre o ON DELETE SET NULL pode ser útil, mas opcional
-    res.json({ mensagem: "Cliente deletado com sucesso! Vendas associadas (se houver) agora não têm mais cliente vinculado." }); 
+    res.json({ mensagem: "Cliente deletado com sucesso! Vendas associadas (se houver) agora não têm mais cliente vinculado." });
   });
 });
 

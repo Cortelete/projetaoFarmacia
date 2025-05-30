@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
 
 // Importar os modelos necessários
 const CompraItens = require("../models/compraItensModel");
-// Poderíamos precisar do Compra e Medicamento para lógicas mais complexas
-// const Compra = require("../models/compraModel");
-// const Medicamento = require("../models/medicamentoModel_atualizado");
+
+// --- Permissões Definidas ---
+// Operações em itens individuais de compra são complexas.
+// Permitir apenas para Gerente e Administrador.
 
 // Rota para BUSCAR um item de compra específico por ID (GET /api/compra_itens/:id)
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   CompraItens.buscarPorId(id, (err, item) => {
     if (err) {
@@ -23,26 +25,17 @@ router.get("/:id", (req, res) => {
 });
 
 // Rota para ATUALIZAR um item de compra por ID (PUT /api/compra_itens/:id)
-// ATENÇÃO: Atualizar um item individualmente pode ter implicações complexas
-// na compra geral (valor total) e no estoque. Esta é uma implementação básica.
-router.put("/:id", (req, res) => {
+// ATENÇÃO: Lógica simplificada. Não atualiza estoque nem total da compra.
+router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   const dadosItem = req.body; // Espera { quantidade, precoUnitario }
 
-  // Validações básicas
   if (dadosItem.quantidade !== undefined && (isNaN(parseInt(dadosItem.quantidade)) || parseInt(dadosItem.quantidade) <= 0)) {
     return res.status(400).json({ erro: "Quantidade inválida." });
   }
   if (dadosItem.precoUnitario !== undefined && (isNaN(parseFloat(dadosItem.precoUnitario)) || parseFloat(dadosItem.precoUnitario) < 0)) {
     return res.status(400).json({ erro: "Preço unitário inválido." });
   }
-
-  // Lógica Simplificada: Apenas atualiza o item.
-  // Em um sistema real, seria necessário:
-  // 1. Buscar o item antigo para saber a diferença de quantidade/preço.
-  // 2. Atualizar o estoque (se a quantidade mudou).
-  // 3. Recalcular e atualizar o valorTotal na tabela 'compras'.
-  // Tudo isso dentro de uma transação.
 
   CompraItens.atualizar(id, dadosItem, (err, result) => {
     if (err) {
@@ -60,16 +53,9 @@ router.put("/:id", (req, res) => {
 });
 
 // Rota para DELETAR um item de compra por ID (DELETE /api/compra_itens/:id)
-// ATENÇÃO: Deletar um item individualmente tem implicações complexas.
-router.delete("/:id", (req, res) => {
+// ATENÇÃO: Lógica simplificada. Não reverte estoque nem atualiza total da compra.
+router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
-
-  // Lógica Simplificada: Apenas deleta o item.
-  // Em um sistema real, seria necessário:
-  // 1. Buscar o item antes de deletar para saber qual medicamento/quantidade era.
-  // 2. Reverter o estoque daquele medicamento (diminuir).
-  // 3. Recalcular e atualizar o valorTotal na tabela 'compras'.
-  // Tudo isso dentro de uma transação.
 
   CompraItens.deletar(id, (err, result) => {
     if (err) {
@@ -79,12 +65,9 @@ router.delete("/:id", (req, res) => {
     if (result.changes === 0) {
       return res.status(404).json({ erro: "Item de compra não encontrado para deleção." });
     }
-    res.json({ mensagem: "Item de compra deletado com sucesso! (Atenção: Valor total da compra e estoque precisam ser ajustados manually/separadamente)" });
+    res.json({ mensagem: "Item de compra deletado com sucesso! (Atenção: Valor total da compra e estoque precisam ser ajustados manualmente/separadamente)" });
   });
 });
-
-// Não faz sentido ter um POST aqui, pois itens são criados junto com a compra principal.
-// A rota GET para listar todos os itens de UMA compra específica já está em compras_route.js.
 
 module.exports = router;
 
