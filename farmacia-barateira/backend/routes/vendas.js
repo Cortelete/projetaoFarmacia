@@ -1,20 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../database/db"); // Import db para transações
-const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
+const db = require("../database/db");
 
 // Importar os modelos necessários
 const Venda = require("../models/vendaModel");
 const VendaItens = require("../models/vendaItensModel");
 const Medicamento = require("../models/medicamentoModel");
 
-// --- Permissões Definidas ---
-// Listar/Buscar: Gerente, Administrador (Acesso a dados financeiros)
-// Cadastrar: Funcionário, Gerente, Administrador (Operação de venda)
-// Deletar: Administrador (Operação sensível, sem restauração de estoque)
-
 // Rota para LISTAR todas as vendas (GET /api/vendas)
-router.get("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.get("/", (req, res) => {
   Venda.listarTodas((err, vendas) => {
     if (err) {
       console.error("Erro ao listar vendas:", err);
@@ -25,7 +19,7 @@ router.get("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res)
 });
 
 // Rota para BUSCAR uma venda por ID e seus itens (GET /api/vendas/:id)
-router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
   Venda.buscarPorId(id, (err, venda) => {
     if (err) {
@@ -47,17 +41,15 @@ router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
 });
 
 // Rota para CADASTRAR uma nova venda (POST /api/vendas)
-router.post("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), async (req, res) => {
-  // Adiciona o usuario_id do token se não for fornecido (ou valida se é o mesmo)
-  const usuario_id_token = req.user.id; // ID do usuário logado vindo do token
+router.post("/", async (req, res) => {
+  // Simulação de extração do ID do usuário (removido do token)
+  const usuario_id_token = req.body.usuario_id; // Ou defina de outra forma se necessário
   let { cliente_id, usuario_id, itens } = req.body;
 
-  // Se usuario_id não veio no body, usa o do token. Se veio, idealmente deveria ser o mesmo.
-  // Por simplicidade, vamos usar o do token como o responsável pela venda.
   usuario_id = usuario_id_token;
 
   if (!usuario_id || !itens || !Array.isArray(itens) || itens.length === 0) {
-    return res.status(400).json({ erro: "Dados da venda inválidos. Usuário (implícito) e lista de itens são obrigatórios." });
+    return res.status(400).json({ erro: "Dados da venda inválidos. Usuário e lista de itens são obrigatórios." });
   }
 
   let valorTotalVenda = 0;
@@ -85,27 +77,27 @@ router.post("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrado
         let erroItem = null;
 
         itens.forEach(item => {
-          if (erroItem) return; // Otimização: não processa mais se já deu erro
+          if (erroItem) return;
 
           VendaItens.cadastrar({ ...item, venda_id: vendaId }, (errItem) => {
-            if (erroItem) return; // Evita processamento concorrente após erro
+            if (erroItem) return;
             if (errItem) {
               erroItem = errItem;
               console.error("Erro ao cadastrar item da venda (transação):", errItem);
-              db.run("ROLLBACK"); // Rollback imediato ao detectar erro
+              db.run("ROLLBACK");
               return res.status(500).json({ erro: "Erro ao registrar item da venda.", detalhe: erroItem.message });
             }
 
             Medicamento.atualizarEstoque(item.medicamento_id, -item.quantidade, (errEstoque) => {
-              if (erroItem) return; // Evita processamento concorrente após erro
+              if (erroItem) return;
               if (errEstoque) {
                 erroItem = errEstoque;
                 console.error("Erro ao atualizar estoque (transação):", errEstoque);
-                db.run("ROLLBACK"); // Rollback imediato ao detectar erro
+                db.run("ROLLBACK");
                 const msgErro = errEstoque.message.includes("insufficient stock") || errEstoque.message.includes("CHECK constraint failed")
                                 ? "Erro ao atualizar estoque (quantidade insuficiente)."
                                 : "Erro ao atualizar estoque.";
-                return res.status(409).json({ erro: msgErro, detalhe: errEstoque.message }); // 409 Conflict para estoque
+                return res.status(409).json({ erro: msgErro, detalhe: errEstoque.message });
               }
 
               itensProcessados++;
@@ -126,10 +118,9 @@ router.post("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrado
 });
 
 // Rota para DELETAR uma venda por ID (DELETE /api/vendas/:id)
-router.delete("/:id", verifyToken, checkRole(["Administrador"]), (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
-  // Implementação simples (sem restauração de estoque):
   Venda.deletar(id, (err, result) => {
     if (err) {
       console.error(`Erro ao deletar venda ${id}:`, err);
@@ -143,4 +134,3 @@ router.delete("/:id", verifyToken, checkRole(["Administrador"]), (req, res) => {
 });
 
 module.exports = router;
-

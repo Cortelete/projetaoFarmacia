@@ -1,5 +1,5 @@
 /* Estilos personalizados para Farmácia A Barateira */
-
+@import "tailwindcss";
 /* Ajustes para responsividade em dispositivos móveis */
 @media (max-width: 768px) {
     /* Ajuste do sidebar em dispositivos móveis */
@@ -245,4 +245,78 @@ input:focus, select:focus, textarea:focus {
 /* Fonte padrão */
 body {
     font-family: 'Inter', sans-serif;
+}
+footer {
+    background-color: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    padding: 1.5rem 1rem;
+    margin-top: auto; /* Isso empurra o footer para baixo */
+}
+
+.footer-content {
+    max-width: 85rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    footer {
+        padding: 1.5rem 2rem;
+    }
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .footer-logo {
+        margin-bottom: 0;
+    }
+}
+
+.footer-logo i {
+    color: #3b82f6;
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+}
+
+.footer-logo span {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.footer-logo .text-blue {
+    color: #3b82f6;
+}
+
+.footer-info {
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .footer-info {
+        text-align: right;
+    }
+}
+
+.footer-info p {
+    margin: 0.25rem 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.footer-info .version {
+    font-size: 0.75rem;
+    color: #9ca3af;
 }

@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const Medicamento = require("../models/medicamentoModel");
-const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
+const { verifyToken, checkRole } = require("../middleware/authMiddleware");
 
-// --- Permissões Definidas ---
-// Listar/Buscar: Funcionário, Gerente, Administrador (Todos precisam ver o estoque)
-// Cadastrar/Atualizar/Deletar: Gerente, Administrador (Controle de estoque)
+// --- Permissões ---
+// GET (listar/buscar): Funcionário, Gerente, Administrador
+// POST/PUT/DELETE: Gerente, Administrador
 
-// Rota para LISTAR todos os medicamentos (GET /api/medicamentos)
+// LISTAR medicamentos
 router.get("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
   Medicamento.listarTodos((err, medicamentos) => {
     if (err) {
@@ -18,7 +18,7 @@ router.get("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador
   });
 });
 
-// Rota para BUSCAR um medicamento por ID (GET /api/medicamentos/:id)
+// BUSCAR medicamento por ID
 router.get("/:id", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   Medicamento.buscarPorId(id, (err, medicamento) => {
@@ -33,7 +33,7 @@ router.get("/:id", verifyToken, checkRole(["Funcionario", "Gerente", "Administra
   });
 });
 
-// Rota para CADASTRAR um novo medicamento (POST /api/medicamentos)
+// CADASTRAR novo medicamento
 router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const dadosMed = req.body;
 
@@ -41,10 +41,10 @@ router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res
     return res.status(400).json({ erro: "Nome, preço e estoque atual são obrigatórios." });
   }
   if (isNaN(parseFloat(dadosMed.preco)) || parseFloat(dadosMed.preco) < 0) {
-      return res.status(400).json({ erro: "Preço inválido." });
+    return res.status(400).json({ erro: "Preço inválido." });
   }
-   if (isNaN(parseInt(dadosMed.estoqueAtual)) || parseInt(dadosMed.estoqueAtual) < 0) {
-      return res.status(400).json({ erro: "Estoque atual inválido." });
+  if (isNaN(parseInt(dadosMed.estoqueAtual)) || parseInt(dadosMed.estoqueAtual) < 0) {
+    return res.status(400).json({ erro: "Estoque atual inválido." });
   }
 
   Medicamento.cadastrar(dadosMed, (err, result) => {
@@ -56,27 +56,27 @@ router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res
   });
 });
 
-// Rota para ATUALIZAR um medicamento por ID (PUT /api/medicamentos/:id)
+// ATUALIZAR medicamento por ID
 router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
   const dadosMed = req.body;
 
-   if (dadosMed.preco !== undefined && (isNaN(parseFloat(dadosMed.preco)) || parseFloat(dadosMed.preco) < 0)) {
-      return res.status(400).json({ erro: "Preço inválido." });
+  if (dadosMed.preco !== undefined && (isNaN(parseFloat(dadosMed.preco)) || parseFloat(dadosMed.preco) < 0)) {
+    return res.status(400).json({ erro: "Preço inválido." });
   }
-   if (dadosMed.estoqueAtual !== undefined && (isNaN(parseInt(dadosMed.estoqueAtual)) || parseInt(dadosMed.estoqueAtual) < 0)) {
-      return res.status(400).json({ erro: "Estoque atual inválido." });
+  if (dadosMed.estoqueAtual !== undefined && (isNaN(parseInt(dadosMed.estoqueAtual)) || parseInt(dadosMed.estoqueAtual) < 0)) {
+    return res.status(400).json({ erro: "Estoque atual inválido." });
   }
   if (dadosMed.promocaoAtiva !== undefined && ![0, 1].includes(dadosMed.promocaoAtiva)) {
-       return res.status(400).json({ erro: "Valor inválido para promoção ativa (deve ser 0 ou 1)." });
+    return res.status(400).json({ erro: "Valor inválido para promoção ativa (deve ser 0 ou 1)." });
   }
 
   Medicamento.atualizar(id, dadosMed, (err, result) => {
     if (err) {
       console.error(`Erro ao atualizar medicamento ${id}:`, err);
-       if (err.message && err.message.includes("Nenhum campo para atualizar")) {
-           return res.status(400).json({ erro: err.message });
-       }
+      if (err.message?.includes("Nenhum campo para atualizar")) {
+        return res.status(400).json({ erro: err.message });
+      }
       return res.status(500).json({ erro: "Erro interno ao atualizar medicamento." });
     }
     if (result.changes === 0) {
@@ -86,15 +86,15 @@ router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
   });
 });
 
-// Rota para DELETAR um medicamento por ID (DELETE /api/medicamentos/:id)
+// DELETAR medicamento por ID
 router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
   const { id } = req.params;
 
   Medicamento.deletar(id, (err, result) => {
     if (err) {
       console.error(`Erro ao deletar medicamento ${id}:`, err);
-      if (err.message && err.message.includes("FOREIGN KEY constraint failed")) {
-          return res.status(409).json({ erro: "Não é possível deletar o medicamento pois ele possui vendas ou compras associadas." });
+      if (err.message?.includes("FOREIGN KEY constraint failed")) {
+        return res.status(409).json({ erro: "Não é possível deletar: medicamento com vendas ou compras associadas." });
       }
       return res.status(500).json({ erro: "Erro interno ao deletar medicamento." });
     }
@@ -105,7 +105,4 @@ router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req
   });
 });
 
-// A rota PUT antiga baseada em nome foi comentada no arquivo original e permanecerá assim.
-
 module.exports = router;
-

@@ -27,14 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let descontoAtual = 0;
     
     // Verificar autenticação
-    function verificarAutenticacao() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = "index.html";
-            return false;
-        }
-        return true;
-    }
+function verificarAutenticacao() {
+    return true; // autenticação desativada
+}
     
     // Buscar clientes
     clienteSearch.addEventListener("input", async () => {

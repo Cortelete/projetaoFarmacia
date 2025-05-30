@@ -1,16 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
 
 // Importar os modelos necessários
 const CompraItens = require("../models/compraItensModel");
 
-// --- Permissões Definidas ---
-// Operações em itens individuais de compra são complexas.
-// Permitir apenas para Gerente e Administrador.
-
 // Rota para BUSCAR um item de compra específico por ID (GET /api/compra_itens/:id)
-router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
   CompraItens.buscarPorId(id, (err, item) => {
     if (err) {
@@ -26,7 +21,7 @@ router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
 
 // Rota para ATUALIZAR um item de compra por ID (PUT /api/compra_itens/:id)
 // ATENÇÃO: Lógica simplificada. Não atualiza estoque nem total da compra.
-router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const dadosItem = req.body; // Espera { quantidade, precoUnitario }
 
@@ -41,8 +36,8 @@ router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
     if (err) {
       console.error(`Erro ao atualizar item de compra ${id}:`, err);
       if (err.message && err.message.includes("Nenhum campo para atualizar")) {
-           return res.status(400).json({ erro: err.message });
-       }
+        return res.status(400).json({ erro: err.message });
+      }
       return res.status(500).json({ erro: "Erro interno ao atualizar item de compra." });
     }
     if (result.changes === 0) {
@@ -54,7 +49,7 @@ router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
 
 // Rota para DELETAR um item de compra por ID (DELETE /api/compra_itens/:id)
 // ATENÇÃO: Lógica simplificada. Não reverte estoque nem atualiza total da compra.
-router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
   CompraItens.deletar(id, (err, result) => {
@@ -70,4 +65,3 @@ router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req
 });
 
 module.exports = router;
-

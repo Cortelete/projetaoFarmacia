@@ -13,14 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutButton = document.getElementById("logout-button");
     
     // Verificar autenticação
-    function verificarAutenticacao() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = "index.html";
-            return false;
-        }
-        return true;
-    }
+function verificarAutenticacao() {
+    return true; // autenticação desativada
+}
     
     // Carregar fornecedores do backend
     async function carregarFornecedores() {

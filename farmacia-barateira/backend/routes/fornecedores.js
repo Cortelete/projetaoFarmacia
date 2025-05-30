@@ -1,14 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Fornecedor = require("../models/fornecedorModel");
-const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
-
-// --- Permissões Definidas ---
-// Listar/Buscar: Gerente, Administrador (Acesso a dados de compras/fornecedores)
-// Cadastrar/Atualizar/Deletar: Gerente, Administrador (Gerenciamento de fornecedores)
 
 // Rota para LISTAR todos os fornecedores (GET /api/fornecedores)
-router.get("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.get("/", (req, res) => {
   Fornecedor.listarTodos((err, fornecedores) => {
     if (err) {
       console.error("Erro ao listar fornecedores:", err);
@@ -19,7 +14,7 @@ router.get("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res)
 });
 
 // Rota para BUSCAR um fornecedor por ID (GET /api/fornecedores/:id)
-router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
   Fornecedor.buscarPorId(id, (err, fornecedor) => {
     if (err) {
@@ -34,7 +29,7 @@ router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
 });
 
 // Rota para CADASTRAR um novo fornecedor (POST /api/fornecedores)
-router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.post("/", (req, res) => {
   const dadosFornecedor = req.body;
 
   if (!dadosFornecedor.nome) {
@@ -54,12 +49,12 @@ router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res
 });
 
 // Rota para ATUALIZAR um fornecedor por ID (PUT /api/fornecedores/:id)
-router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const dadosFornecedor = req.body;
 
   if (dadosFornecedor.nome === "") {
-      return res.status(400).json({ erro: "Nome do fornecedor não pode ser vazio." });
+    return res.status(400).json({ erro: "Nome do fornecedor não pode ser vazio." });
   }
 
   Fornecedor.atualizar(id, dadosFornecedor, (err, result) => {
@@ -68,9 +63,9 @@ router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
       if (err.message && err.message.includes("CNPJ já cadastrado")) {
         return res.status(409).json({ erro: err.message });
       }
-       if (err.message && err.message.includes("Nenhum campo para atualizar")) {
-           return res.status(400).json({ erro: err.message });
-       }
+      if (err.message && err.message.includes("Nenhum campo para atualizar")) {
+        return res.status(400).json({ erro: err.message });
+      }
       return res.status(500).json({ erro: "Erro interno ao atualizar fornecedor." });
     }
     if (result.changes === 0) {
@@ -81,14 +76,14 @@ router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
 });
 
 // Rota para DELETAR um fornecedor por ID (DELETE /api/fornecedores/:id)
-router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
   Fornecedor.deletar(id, (err, result) => {
     if (err) {
       console.error(`Erro ao deletar fornecedor ${id}:`, err);
       if (err.message && err.message.includes("compras associadas")) {
-          return res.status(409).json({ erro: err.message });
+        return res.status(409).json({ erro: err.message });
       }
       return res.status(500).json({ erro: "Erro interno ao deletar fornecedor." });
     }
@@ -100,4 +95,3 @@ router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req
 });
 
 module.exports = router;
-

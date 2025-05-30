@@ -1,14 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Cliente = require("../models/clienteModel");
-const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
-
-// --- Permissões Definidas ---
-// Listar/Buscar/Cadastrar: Funcionário, Gerente, Administrador
-// Atualizar/Deletar: Gerente, Administrador
 
 // Rota para LISTAR todos os clientes (GET /api/clientes)
-router.get("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
+router.get("/", (req, res) => {
   Cliente.listarTodos((err, clientes) => {
     if (err) {
       console.error("Erro ao listar clientes:", err);
@@ -19,7 +14,7 @@ router.get("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador
 });
 
 // Rota para BUSCAR um cliente por ID (GET /api/clientes/:id)
-router.get("/:id", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
   Cliente.buscarPorId(id, (err, cliente) => {
     if (err) {
@@ -34,7 +29,7 @@ router.get("/:id", verifyToken, checkRole(["Funcionario", "Gerente", "Administra
 });
 
 // Rota para CADASTRAR um novo cliente (POST /api/clientes)
-router.post("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrador"]), (req, res) => {
+router.post("/", (req, res) => {
   const dadosCliente = req.body;
 
   if (!dadosCliente.nome) {
@@ -51,20 +46,20 @@ router.post("/", verifyToken, checkRole(["Funcionario", "Gerente", "Administrado
 });
 
 // Rota para ATUALIZAR um cliente por ID (PUT /api/clientes/:id)
-router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const dadosCliente = req.body;
 
   if (dadosCliente.nome === "") {
-      return res.status(400).json({ erro: "Nome do cliente não pode ser vazio." });
+    return res.status(400).json({ erro: "Nome do cliente não pode ser vazio." });
   }
 
   Cliente.atualizar(id, dadosCliente, (err, result) => {
     if (err) {
       console.error(`Erro ao atualizar cliente ${id}:`, err);
-       if (err.message && err.message.includes("Nenhum campo para atualizar")) {
-           return res.status(400).json({ erro: err.message });
-       }
+      if (err.message && err.message.includes("Nenhum campo para atualizar")) {
+        return res.status(400).json({ erro: err.message });
+      }
       return res.status(500).json({ erro: "Erro interno ao atualizar cliente." });
     }
     if (result.changes === 0) {
@@ -75,7 +70,7 @@ router.put("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
 });
 
 // Rota para DELETAR um cliente por ID (DELETE /api/clientes/:id)
-router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
   Cliente.deletar(id, (err, result) => {
@@ -91,4 +86,3 @@ router.delete("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req
 });
 
 module.exports = router;
-

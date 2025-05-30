@@ -1,20 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../database/db"); // Import db para transações
-const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Importar middleware
+const db = require("../database/db");
 
 // Importar os modelos necessários
 const Compra = require("../models/compraModel");
 const CompraItens = require("../models/compraItensModel");
 const Medicamento = require("../models/medicamentoModel");
 
-// --- Permissões Definidas ---
-// Listar/Buscar: Gerente, Administrador
-// Cadastrar: Gerente, Administrador
-// Deletar: Administrador
-
 // Rota para LISTAR todas as compras (GET /api/compras)
-router.get("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.get("/", (req, res) => {
   Compra.listarTodas((err, compras) => {
     if (err) {
       console.error("Erro ao listar compras:", err);
@@ -25,7 +19,7 @@ router.get("/", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res)
 });
 
 // Rota para BUSCAR uma compra por ID e seus itens (GET /api/compras/:id)
-router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
   Compra.buscarPorId(id, (err, compra) => {
     if (err) {
@@ -47,7 +41,7 @@ router.get("/:id", verifyToken, checkRole(["Gerente", "Administrador"]), (req, r
 });
 
 // Rota para CADASTRAR uma nova compra (POST /api/compras)
-router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), async (req, res) => {
+router.post("/", async (req, res) => {
   const { fornecedor_id, itens } = req.body;
 
   if (!fornecedor_id || !itens || !Array.isArray(itens) || itens.length === 0) {
@@ -98,7 +92,6 @@ router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), async (re
                 erroItem = errEstoque;
                 console.error("Erro ao atualizar estoque (compra - transação):", errEstoque);
                 db.run("ROLLBACK");
-                // O erro aqui geralmente seria medicamento não encontrado, tratado no CompraItens.cadastrar
                 return res.status(500).json({ erro: "Erro inesperado ao atualizar estoque.", detalhe: errEstoque.message });
               }
 
@@ -120,7 +113,7 @@ router.post("/", verifyToken, checkRole(["Gerente", "Administrador"]), async (re
 });
 
 // Rota para DELETAR uma compra por ID (DELETE /api/compras/:id)
-router.delete("/:id", verifyToken, checkRole(["Administrador"]), (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
   Compra.deletar(id, (err, result) => {
@@ -136,4 +129,3 @@ router.delete("/:id", verifyToken, checkRole(["Administrador"]), (req, res) => {
 });
 
 module.exports = router;
-
