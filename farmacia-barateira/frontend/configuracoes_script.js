@@ -1,72 +1,109 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Seleciona os links das abas não funcionais
+    // Seleciona os links das abas não funcionais (Usuários, Preferências, Integrações)
     const abasNaoFuncionais = document.querySelectorAll('nav[aria-label="Tabs"] a:not([aria-current="page"])');
 
-    // Seleciona botões dentro das seções não funcionais (exemplo)
-    const btnGerenciarUsuarios = document.querySelector('.config-card button:contains("Gerenciar Usuários")'); // Ajustar seletor se necessário
-    const btnSalvarPreferencias = document.querySelector('.config-card button:contains("Salvar Preferências")'); // Ajustar seletor
-    const btnConectarIntegracao = document.querySelectorAll('.config-card button:contains("Conectar")'); // Ajustar seletor
+    // Seleciona botões específicos por ID
+    const btnUsuarios = document.getElementById('gerenciar-usuarios-btn');
+    const btnPrefs = document.getElementById('salvar-preferencias-btn');
+    // Seleciona todos os botões que começam com 'conectar-integracao-'
+    const btnsIntegracao = document.querySelectorAll('[id^="conectar-integracao-"]'); 
 
     const mensagemPadrao = "Esta funcionalidade ainda está em desenvolvimento. 🚧";
 
-    // Adiciona listener para as abas
+    // Adiciona listener para as abas não funcionais
     abasNaoFuncionais.forEach(aba => {
         aba.addEventListener('click', (event) => {
-            event.preventDefault(); // Impede a navegação padrão do link
+            event.preventDefault(); // Impede a navegação padrão do link (href="#")
             alert(mensagemPadrao);
         });
     });
 
-    // Adiciona listener para botões específicos (se existirem e forem identificáveis)
-    // Nota: Os seletores :contains não são padrão CSS, pode ser necessário usar IDs ou classes específicas.
-    // Vamos adicionar IDs aos botões no HTML para facilitar.
-
-    // Exemplo com IDs (precisa adicionar os IDs no HTML)
-    const btnUsuarios = document.getElementById('gerenciar-usuarios-btn');
-    const btnPrefs = document.getElementById('salvar-preferencias-btn');
-    const btnsIntegracao = document.querySelectorAll('[id^="conectar-integracao-"]'); // Assumindo IDs como conectar-integracao-1, etc.
-
+    // Adiciona listener para o botão "Gerenciar Usuários"
     if (btnUsuarios) {
-        btnUsuarios.addEventListener('click', (event) => {
-            event.preventDefault();
+        btnUsuarios.addEventListener('click', async (event) => {
+            event.preventDefault(); // Previne qualquer ação padrão do botão
             alert(mensagemPadrao);
+
+            // Exemplo de envio de dados via fetch (atualize com os dados reais)
+            try {
+                const response = await fetch('/api/atualizar-usuarios', {  // Atualize a URL da API
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId: 1, nome: 'Novo Nome' }),  // Dados fictícios
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao atualizar usuário');
+                }
+
+                const data = await response.json();
+                console.log('Dados atualizados:', data);
+            } catch (error) {
+                console.error('Erro:', error);
+            }
         });
     }
 
+    // Adiciona listener para o botão "Salvar Preferências"
     if (btnPrefs) {
-        btnPrefs.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevenir envio de formulário se for type=submit
+        btnPrefs.addEventListener('click', async (event) => {
+            event.preventDefault(); // Previne envio de formulário se for type=submit
             alert(mensagemPadrao);
+
+            // Exemplo de envio de dados via fetch (atualize com os dados reais)
+            try {
+                const response = await fetch('/api/salvar-preferencias', {  // Atualize a URL da API
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ preferencia: 'nova-preferencia' }),  // Dados fictícios
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao salvar preferências');
+                }
+
+                const data = await response.json();
+                console.log('Preferências salvas:', data);
+            } catch (error) {
+                console.error('Erro:', error);
+            }
         });
     }
 
+    // Adiciona listener para os botões de "Conectar/Desconectar" das integrações
     btnsIntegracao.forEach(btn => {
-        btn.addEventListener('click', (event) => {
-            event.preventDefault();
+        btn.addEventListener('click', async (event) => {
+            event.preventDefault(); // Previne qualquer ação padrão do botão
             alert(mensagemPadrao);
+
+            // Exemplo de envio de dados via fetch (atualize com os dados reais)
+            try {
+                const response = await fetch('/api/gerenciar-integracao', {  // Atualize a URL da API
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ integracaoId: btn.id, status: 'ativo' }),  // Dados fictícios
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao conectar/desconectar integração');
+                }
+
+                const data = await response.json();
+                console.log('Integração atualizada:', data);
+            } catch (error) {
+                console.error('Erro:', error);
+            }
         });
     });
 
-    // Adiciona listener genérico para links dentro das seções não implementadas (se necessário)
-    // Ex: document.querySelectorAll('#secao-usuarios a, #secao-preferencias a, #secao-integracoes a').forEach(...)
+    // Nota: O botão "Alterar Logo" e "Salvar Informações" na seção Geral
+    // não foram incluídos aqui, pois pertencem à parte funcional (Geral).
+    // Se eles também não estiverem implementados, adicione IDs e listeners para eles.
 
 });
-
-// Adiciona a função contains para jQuery-like selector (simplificado)
-// Isso pode não ser robusto, idealmente usar IDs ou classes.
-// Considerar remover se for usar IDs.
-/*
-document.querySelectorAll = (function (original) {
-    return function (selector) {
-        if (selector.includes(':contains')) {
-            const parts = selector.split(':contains(');
-            const baseSelector = parts[0];
-            const text = parts[1].replace(/['")]/g, '');
-            const elements = document.querySelectorAll(baseSelector);
-            return Array.from(elements).filter(el => el.textContent.includes(text));
-        }
-        return original.call(document, selector);
-    };
-})(document.querySelectorAll);
-*/
-
