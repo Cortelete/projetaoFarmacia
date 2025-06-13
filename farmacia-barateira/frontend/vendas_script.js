@@ -468,6 +468,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+        
+
         clienteSelecionadoDiv.addEventListener('click', e => {
             if (e.target.closest('button[data-action="remover-cliente"]')) removerCliente();
         });
@@ -486,7 +488,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
+    const logoutButton = document.getElementById("logout-button");
+    if(logoutButton) {
+        logoutButton.addEventListener("click", () => {
+            alert("Você foi desconectado.");
+            window.location.href = "index.html"; 
+        });
+    }
     // --- INICIALIZAÇÃO DA PÁGINA ---
     inicializarPagina();
 });

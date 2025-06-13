@@ -7,47 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const fornecedoresContainer = document.getElementById("fornecedores-container");
     const searchInput = document.getElementById("search-input");
     const addFornecedorButton = document.getElementById("add-fornecedor-button");
-    const fornecedorModal = document.getElementById("fornecedor-modal"); // Assumindo que existe no HTML
-    const fornecedorForm = document.getElementById("fornecedor-form"); // Assumindo que existe no modal
-    const cancelButton = document.getElementById("cancel-button"); // Assumindo que existe
-    const modalErrorMessage = document.getElementById("modal-error-message"); // Assumindo que existe
-    const modalTitle = document.getElementById("modal-title"); // Assumindo que existe
-    const fornecedorIdInput = document.getElementById("fornecedor-id"); // Assumindo input hidden para ID
-    const logoutButton = document.getElementById("logout-button");
+    const fornecedorModal = document.getElementById("fornecedor-modal");
+    const fornecedorForm = document.getElementById("fornecedor-form");
+    const cancelButton = document.getElementById("cancel-button");
+    const saveButton = document.getElementById("save-button"); 
+    const modalErrorMessage = document.getElementById("modal-error-message");
+    const modalTitle = document.getElementById("modal-title");
+    const fornecedorIdInput = document.getElementById("fornecedor-id");
 
-    // Dados simulados (substituir por fetch real)
-    let fornecedoresExemplo = [
-        {
-            id: 1,
-            nome: "Pharma Distribuidora",
-            cnpj: "12.345.678/0001-90",
-            email: "contato@pharmadistribuidora.com",
-            telefone: "(11) 3456-7890",
-            endereco: "Av. Industrial, 1000 - São Paulo/SP",
-            categorias: ["Medicamentos", "Cosméticos", "Vitaminas"],
-            ultima_compra: "2025-05-15"
-        },
-        {
-            id: 2,
-            nome: "MediTech Equipamentos",
-            cnpj: "98.765.432/0001-10",
-            email: "vendas@meditech.com.br",
-            telefone: "(11) 2345-6789",
-            endereco: "Rua Tecnológica, 500 - Campinas/SP",
-            categorias: ["Equipamentos", "Instrumentos", "Tecnologia"],
-            ultima_compra: "2025-04-02"
-        },
-        {
-            id: 3,
-            nome: "NaturaPharma",
-            cnpj: "45.678.901/0001-23",
-            email: "comercial@naturapharma.com.br",
-            telefone: "(11) 4567-8901",
-            endereco: "Estrada Rural, 789 - Ribeirão Preto/SP",
-            categorias: ["Fitoterápicos", "Naturais", "Orgânicos"],
-            ultima_compra: "2025-05-20"
-        }
-    ];
+    // Novos elementos para os botões de filtro
+    const filterAllButton = document.querySelector('.flex-wrap > button:nth-child(1)'); // "Todos"
+    const filterMedicamentosButton = document.querySelector('.flex-wrap > button:nth-child(2)'); // "Medicamentos"
+    const filterEquipamentosButton = document.querySelector('.flex-wrap > button:nth-child(3)'); // "Equipamentos"
+
+
+    let allFornecedores = []; // Armazenará os fornecedores reais da API
 
     // --- Funções Auxiliares ---
     function formatarData(dataString) {
@@ -63,20 +37,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Lógica Principal ---
 
-    // Carregar fornecedores (simulado)
-    async function carregarFornecedores(filtro = "") {
-        console.log(`Carregando fornecedores com filtro: "${filtro}"`);
+    // carregarFornecedores agora aceita um filtro de categoria e um termo de busca
+    async function carregarFornecedores(filtroTermo = "", filtroCategoria = "Todos") {
+        console.log(`Carregando fornecedores da API. Termo: "${filtroTermo}", Categoria: "${filtroCategoria}"`);
         try {
-            // Simulação de fetch
-            const fornecedoresFiltrados = fornecedoresExemplo.filter(fornecedor =>
-                fornecedor.nome.toLowerCase().includes(filtro.toLowerCase()) ||
-                fornecedor.cnpj.includes(filtro)
-            );
+            const response = await fetch(`${API_BASE_URL}/fornecedores`);
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            allFornecedores = await response.json(); // Armazena TODOS os fornecedores brutos
+            
+            let fornecedoresFiltrados = allFornecedores;
+
+            // Aplica filtro por termo de busca (se houver)
+            if (filtroTermo) {
+                fornecedoresFiltrados = fornecedoresFiltrados.filter(fornecedor =>
+                    (fornecedor.nome && fornecedor.nome.toLowerCase().includes(filtroTermo.toLowerCase())) ||
+                    (fornecedor.nomeFantasia && fornecedor.nomeFantasia.toLowerCase().includes(filtroTermo.toLowerCase())) ||
+                    (fornecedor.razaoSocial && fornecedor.razaoSocial.toLowerCase().includes(filtroTermo.toLowerCase())) ||
+                    (fornecedor.cnpj && fornecedor.cnpj.includes(filtroTermo)) ||
+                    (fornecedor.email && fornecedor.email.toLowerCase().includes(filtroTermo.toLowerCase())) ||
+                    (fornecedor.telefone && fornecedor.telefone.includes(filtroTermo)) ||
+                    (fornecedor.endereco && fornecedor.endereco.toLowerCase().includes(filtroTermo.toLowerCase())) ||
+                    (fornecedor.categorias && JSON.parse(fornecedor.categorias).some(cat => cat.toLowerCase().includes(filtroTermo.toLowerCase())))
+                );
+            }
+
+            // Aplica filtro por categoria (se não for "Todos")
+            if (filtroCategoria !== "Todos") {
+                fornecedoresFiltrados = fornecedoresFiltrados.filter(fornecedor => {
+                    const categoriasArray = fornecedor.categorias ? JSON.parse(fornecedor.categorias) : [];
+                    return categoriasArray.some(cat => cat.toLowerCase() === filtroCategoria.toLowerCase());
+                });
+            }
+
             renderizarFornecedores(fornecedoresFiltrados);
         } catch (error) {
-            console.error("Erro ao carregar fornecedores (simulado):", error);
+            console.error("Erro ao carregar fornecedores da API:", error);
             if (fornecedoresContainer) fornecedoresContainer.innerHTML =
-                `<div class="col-span-full text-center py-8 text-red-500">Erro ao carregar fornecedores.</div>`;
+                `<div class="col-span-full text-center py-8 text-red-500">Erro ao carregar fornecedores da API.</div>`;
         }
     }
 
@@ -108,15 +107,30 @@ document.addEventListener("DOMContentLoaded", () => {
         div.dataset.fornecedorId = fornecedor.id;
 
         let emoji = "🏢";
-        if (fornecedor.categorias.includes("Equipamentos")) emoji = "🔬";
-        else if (fornecedor.categorias.includes("Fitoterápicos") || fornecedor.categorias.includes("Naturais")) emoji = "🌿";
+        const categoriasArray = fornecedor.categorias ? JSON.parse(fornecedor.categorias) : [];
 
-        const categoriasHTML = fornecedor.categorias.map(categoria => {
+        // Emojis mais diversificados baseados nas categorias
+        if (categoriasArray.includes("Equipamentos") || categoriasArray.includes("Instrumentos") || categoriasArray.includes("Tecnologia")) emoji = "🔬";
+        else if (categoriasArray.includes("Fitoterápicos") || categoriasArray.includes("Naturais")) emoji = "🌿";
+        else if (categoriasArray.includes("Medicamentos")) emoji = "💊";
+        else if (categoriasArray.includes("Cosméticos")) emoji = "💅";
+        else if (categoriasArray.includes("Higiene Pessoal")) emoji = "🧴";
+        else if (categoriasArray.includes("Suplementos") || categoriasArray.includes("Vitaminas")) emoji = "💪"; // Suplementos/Vitaminas
+        else if (categoriasArray.includes("Hospitalar")) emoji = "🏥";
+        else if (categoriasArray.includes("Veterinários")) emoji = "🐾";
+        else if (categoriasArray.includes("Skincare")) emoji = "✨";
+
+
+        const categoriasHTML = categoriasArray.map(categoria => {
             let bgColor = "bg-blue-100";
             let textColor = "text-blue-800";
-            if (["Equipamentos", "Instrumentos", "Tecnologia"].includes(categoria)) { bgColor = "bg-yellow-100"; textColor = "text-yellow-800"; }
-            else if (["Fitoterápicos", "Naturais", "Orgânicos"].includes(categoria)) { bgColor = "bg-green-100"; textColor = "text-green-800"; }
-            else if (categoria === "Cosméticos") { bgColor = "bg-purple-100"; textColor = "text-purple-800"; }
+            // Cores mais diversificadas para categorias
+            if (["Equipamentos", "Instrumentos", "Tecnologia", "Hospitalar"].includes(categoria)) { bgColor = "bg-yellow-100"; textColor = "text-yellow-800"; }
+            else if (["Fitoterápicos", "Naturais", "Orgânicos", "Alimentos Saudáveis"].includes(categoria)) { bgColor = "bg-green-100"; textColor = "text-green-800"; }
+            else if (["Cosméticos", "Perfumaria", "Skincare", "Dermocosméticos"].includes(categoria)) { bgColor = "bg-purple-100"; textColor = "text-purple-800"; }
+            else if (["Medicamentos", "Medicamentos Genéricos", "Medicamentos Veterinários"].includes(categoria)) { bgColor = "bg-red-100"; textColor = "text-red-800"; }
+            else if (["Higiene Pessoal", "Limpeza Geral"].includes(categoria)) { bgColor = "bg-pink-100"; textColor = "text-pink-800"; }
+            else if (["Suplementos", "Vitaminas"].includes(categoria)) { bgColor = "bg-orange-100"; textColor = "text-orange-800"; }
             return `<span class="${bgColor} ${textColor} text-xs px-2 py-1 rounded-full">${categoria}</span>`;
         }).join("");
 
@@ -124,7 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="p-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-50">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h3 class="text-xl font-semibold text-gray-800">${fornecedor.nome}</h3>
+                        <h3 class="text-xl font-semibold text-gray-800">${fornecedor.nomeFantasia || fornecedor.nome || "N/A"}</h3>
+                        <p class="text-gray-600 mt-1">Razão Social: ${fornecedor.razaoSocial || "N/A"}</p>
                         <p class="text-gray-600 mt-1">CNPJ: ${fornecedor.cnpj || "N/A"}</p>
                     </div>
                     <div class="text-3xl">${emoji}</div>
@@ -146,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </p>
                 </div>
                 <div class="mt-4">
-                    <h4 class="font-medium text-gray-700 mb-2">Produtos Fornecidos:</h4>
+                    <h4 class="font-medium text-gray-700 mb-2">Categorias de Produtos:</h4>
                     <div class="flex flex-wrap gap-2">
                         ${categoriasHTML}
                     </div>
@@ -173,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function abrirModalEdicao(id) {
         console.log("Abrindo modal para editar fornecedor ID:", id);
-        const fornecedor = fornecedoresExemplo.find(f => f.id === id);
+        const fornecedor = allFornecedores.find(f => f.id === id); 
         if (!fornecedor) {
             alert("Fornecedor não encontrado!");
             return;
@@ -182,23 +197,28 @@ document.addEventListener("DOMContentLoaded", () => {
         if (fornecedorForm && fornecedorModal && modalTitle && fornecedorIdInput) {
             fornecedorForm.reset();
             fornecedorIdInput.value = fornecedor.id;
-            document.getElementById("nome").value = fornecedor.nome;
-            document.getElementById("cnpj").value = fornecedor.cnpj;
-            document.getElementById("email").value = fornecedor.email;
-            document.getElementById("telefone").value = fornecedor.telefone;
-            document.getElementById("endereco").value = fornecedor.endereco;
+            // Preenche os campos do modal com os dados do fornecedor, usando os IDs corretos do HTML
+            document.getElementById("nome-fantasia").value = fornecedor.nomeFantasia || fornecedor.nome || "";
+            document.getElementById("razao-social").value = fornecedor.razaoSocial || "";
+            document.getElementById("cnpj").value = fornecedor.cnpj || "";
+            document.getElementById("email-fornecedor").value = fornecedor.email || "";
+            document.getElementById("telefone-fornecedor").value = fornecedor.telefone || "";
+            document.getElementById("endereco-fornecedor").value = fornecedor.endereco || "";
 
-            // Marcar as categorias
-            const checkboxes = document.querySelectorAll("input[name=\"categoria\"]");
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = fornecedor.categorias.includes(checkbox.value);
-            });
+            // Seleciona a categoria principal no select do modal
+            const tipoProdutoSelect = document.getElementById("tipo-produto");
+            const categorias = fornecedor.categorias ? JSON.parse(fornecedor.categorias) : [];
+            if (tipoProdutoSelect && categorias.length > 0) {
+                tipoProdutoSelect.value = categorias[0]; 
+            } else if (tipoProdutoSelect) {
+                tipoProdutoSelect.value = ""; 
+            }
 
             modalTitle.textContent = "Editar Fornecedor";
             if (modalErrorMessage) modalErrorMessage.style.display = "none";
             fornecedorModal.style.display = "flex";
         } else {
-            console.error("Elementos do modal não encontrados!");
+            console.error("Elementos do modal de fornecedor não encontrados!");
         }
     }
 
@@ -209,16 +229,18 @@ document.addEventListener("DOMContentLoaded", () => {
             fornecedorIdInput.value = "";
             modalTitle.textContent = "Adicionar Fornecedor";
             if (modalErrorMessage) modalErrorMessage.style.display = "none";
+            const tipoProdutoSelect = document.getElementById("tipo-produto");
+            if (tipoProdutoSelect) tipoProdutoSelect.value = ""; 
             fornecedorModal.style.display = "flex";
         } else {
-            console.error("Elementos do modal não encontrados!");
+            console.error("Elementos do modal de fornecedor não encontrados!");
         }
     }
 
     function fecharModal() {
         if (fornecedorModal) {
             fornecedorModal.style.display = "none";
-            console.log("Modal fechado.");
+            console.log("Modal de fornecedor fechado.");
         }
     }
 
@@ -227,44 +249,58 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Tentando salvar fornecedor...");
 
         const fornecedorId = fornecedorIdInput ? fornecedorIdInput.value : "";
-        const nome = document.getElementById("nome")?.value;
+        const nomeFantasia = document.getElementById("nome-fantasia")?.value;
+        const razaoSocial = document.getElementById("razao-social")?.value;
         const cnpj = document.getElementById("cnpj")?.value;
-        const email = document.getElementById("email")?.value;
-        const telefone = document.getElementById("telefone")?.value;
-        const endereco = document.getElementById("endereco")?.value;
+        const email = document.getElementById("email-fornecedor")?.value;
+        const telefone = document.getElementById("telefone-fornecedor")?.value;
+        const endereco = document.getElementById("endereco-fornecedor")?.value;
+        const categoriaPrincipal = document.getElementById("tipo-produto")?.value; 
 
-        const categorias = [];
-        document.querySelectorAll("input[name=\"categoria\"]:checked").forEach(checkbox => {
-            categorias.push(checkbox.value);
-        });
+        // Coletar todas as categorias, mesmo que do select venha apenas uma
+        const categoriasParaSalvar = categoriaPrincipal ? [categoriaPrincipal] : [];
 
-        const fornecedorData = { nome, cnpj, email, telefone, endereco, categorias };
+        // Os dados enviados para a API devem corresponder ao que o backend espera no model de fornecedor
+        const fornecedorData = { 
+            nome: nomeFantasia, // Usando nome fantasia como 'nome' principal
+            nomeFantasia: nomeFantasia, 
+            razaoSocial: razaoSocial, 
+            cnpj: cnpj, 
+            email: email, 
+            telefone: telefone, 
+            endereco: endereco, 
+            categorias: JSON.stringify(categoriasParaSalvar) // Enviando como JSON string
+        };
         console.log("Dados do fornecedor para salvar:", fornecedorData);
         const isEdicao = !!fornecedorId;
 
-        try {
-            // Simulação de POST/PUT
-            console.log(`Simulando ${isEdicao ? "PUT" : "POST"} para /api/fornecedores${isEdicao ? "/" + fornecedorId : ""}`);
-            await new Promise(resolve => setTimeout(resolve, 500));
+        const url = isEdicao ? `${API_BASE_URL}/fornecedores/${fornecedorId}` : `${API_BASE_URL}/fornecedores`;
+        const method = isEdicao ? "PUT" : "POST";
 
-            if (isEdicao) {
-                const index = fornecedoresExemplo.findIndex(f => f.id === parseInt(fornecedorId));
-                if (index !== -1) {
-                    fornecedoresExemplo[index] = { ...fornecedoresExemplo[index], ...fornecedorData };
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(fornecedorData),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (modalErrorMessage) {
+                    modalErrorMessage.textContent = data.erro || `Erro ${response.status}: Falha ao salvar fornecedor.`;
+                    modalErrorMessage.style.display = "block";
                 }
-            } else {
-                const novoId = fornecedoresExemplo.length > 0 ? Math.max(...fornecedoresExemplo.map(f => f.id)) + 1 : 1;
-                fornecedoresExemplo.push({ id: novoId, ...fornecedorData, ultima_compra: null }); // Adiciona com ultima_compra nula
+                throw new Error(`Erro HTTP: ${response.status}`);
             }
 
-            console.log("Fornecedor salvo com sucesso (simulado).");
+            alert(data.mensagem || `Fornecedor ${isEdicao ? 'atualizado' : 'cadastrado'} com sucesso!`);
             fecharModal();
-            carregarFornecedores(searchInput ? searchInput.value : "");
-
+            carregarFornecedores(searchInput ? searchInput.value : ""); // Recarrega a lista
         } catch (error) {
-            console.error("Erro ao salvar fornecedor (simulado):", error);
-            if (modalErrorMessage) {
-                modalErrorMessage.textContent = "Erro ao salvar fornecedor. Tente novamente.";
+            console.error("Erro ao salvar fornecedor:", error);
+            if (modalErrorMessage && !modalErrorMessage.textContent) { 
+                modalErrorMessage.textContent = "Ocorreu um erro inesperado ao salvar o fornecedor.";
                 modalErrorMessage.style.display = "block";
             }
         }
@@ -272,49 +308,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function excluirFornecedor(id) {
         console.log("Tentando excluir fornecedor ID:", id);
-        const fornecedor = fornecedoresExemplo.find(f => f.id === id);
-        if (confirm(`Tem certeza que deseja excluir o fornecedor "${fornecedor?.nome || id}"?`)) {
+        const fornecedor = allFornecedores.find(f => f.id === id); 
+        if (confirm(`Tem certeza que deseja excluir o fornecedor "${fornecedor?.nome || fornecedor?.nomeFantasia || id}"? Esta ação não pode ser desfeita.`)) {
             try {
-                // Simulação de DELETE
-                console.log(`Simulando DELETE para /api/fornecedores/${id}`);
-                await new Promise(resolve => setTimeout(resolve, 500));
+                const response = await fetch(`${API_BASE_URL}/fornecedores/${id}`, {
+                    method: "DELETE"
+                });
+                const data = await response.json();
 
-                fornecedoresExemplo = fornecedoresExemplo.filter(f => f.id !== id);
+                if (!response.ok) {
+                    alert(`Erro ao excluir: ${data.erro || response.statusText}`);
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
 
-                console.log("Fornecedor excluído com sucesso (simulado).");
-                carregarFornecedores(searchInput ? searchInput.value : "");
+                alert(data.mensagem || "Fornecedor excluído com sucesso!");
+                carregarFornecedores(searchInput ? searchInput.value : ""); 
             } catch (error) {
-                console.error("Erro ao excluir fornecedor (simulado):", error);
+                console.error("Erro ao excluir fornecedor:", error);
                 alert("Erro ao excluir fornecedor. Tente novamente.");
             }
         }
     }
 
     // --- Event Listeners ---
-
-    // Pesquisa
     if (searchInput) {
         searchInput.addEventListener("input", () => {
-            carregarFornecedores(searchInput.value);
+            carregarFornecedores(searchInput.value, "Todos"); // Mantém "Todos" por padrão na busca
         });
     }
 
-    // Botão Adicionar Fornecedor
     if (addFornecedorButton) {
         addFornecedorButton.addEventListener("click", abrirModalAdicao);
     }
 
-    // Botão Cancelar no Modal
     if (cancelButton) {
         cancelButton.addEventListener("click", fecharModal);
     }
+    if (fornecedorModal) {
+        fornecedorModal.addEventListener("click", (e) => {
+            if (e.target === fornecedorModal) {
+                fecharModal();
+            }
+        });
+    }
 
-    // Submissão do Formulário do Modal
     if (fornecedorForm) {
         fornecedorForm.addEventListener("submit", salvarFornecedor);
     }
 
-    // Delegação de Eventos para botões Editar/Excluir nos Cards
     if (fornecedoresContainer) {
         fornecedoresContainer.addEventListener("click", (event) => {
             const target = event.target.closest("button[data-action]");
@@ -333,18 +374,45 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Logout
-    if (logoutButton) {
+    // Adicionando Event Listeners para os botões de filtro de categoria
+    if (filterAllButton) {
+        filterAllButton.addEventListener('click', () => {
+            carregarFornecedores(searchInput.value, "Todos");
+            // Atualizar classes CSS para indicar qual botão está ativo
+            filterAllButton.classList.add('bg-cyan-100', 'text-cyan-800');
+            filterMedicamentosButton.classList.remove('bg-cyan-100', 'text-cyan-800');
+            filterEquipamentosButton.classList.remove('bg-cyan-100', 'text-cyan-800');
+        });
+    }
+
+    if (filterMedicamentosButton) {
+        filterMedicamentosButton.addEventListener('click', () => {
+            carregarFornecedores(searchInput.value, "Medicamentos");
+            filterAllButton.classList.remove('bg-cyan-100', 'text-cyan-800');
+            filterMedicamentosButton.classList.add('bg-cyan-100', 'text-cyan-800');
+            filterEquipamentosButton.classList.remove('bg-cyan-100', 'text-cyan-800');
+        });
+    }
+
+    if (filterEquipamentosButton) {
+        filterEquipamentosButton.addEventListener('click', () => {
+            carregarFornecedores(searchInput.value, "Equipamentos");
+            filterAllButton.classList.remove('bg-cyan-100', 'text-cyan-800');
+            filterMedicamentosButton.classList.remove('bg-cyan-100', 'text-cyan-800');
+            filterEquipamentosButton.classList.add('bg-cyan-100', 'text-cyan-800');
+        });
+    }
+
+
+    const logoutButton = document.getElementById("logout-button");
+    if(logoutButton) {
         logoutButton.addEventListener("click", () => {
-            console.log("Logout solicitado.");
-            alert("Logout realizado!");
-            window.location.href = "index.html";
+            alert("Você foi desconectado.");
+            window.location.href = "index.html"; 
         });
     }
 
     // --- Inicialização ---
     console.log("Inicializando página de fornecedores...");
-    carregarFornecedores(); // Carrega fornecedores iniciais
-
+    carregarFornecedores(); // Carrega todos os fornecedores inicialmente
 });
-
