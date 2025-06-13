@@ -4,72 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Farmácia A Barateira</title>
-    <!-- Incluindo Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Link para CSS customizado (se necessário) -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center min-h-screen">
+<body class="bg-gradient-to-r from-blue-500 to-cyan-500 flex flex-col min-h-screen">
 
-    <div class="bg-white p-10 rounded-lg shadow-xl w-full max-w-md">
-        <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Farmácia A Barateira</h2>
-        
-        <form id="login-form">
-            <div class="mb-6">
-                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                <input type="email" id="email" name="email" required 
-                       class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent" 
-                       placeholder="seuemail@exemplo.com">
-            </div>
+    <div class="flex-grow flex items-center justify-center p-4">
+        <div class="bg-white p-10 rounded-lg shadow-xl w-full max-w-md">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Farmácia A Barateira</h2>
             
-            <div class="mb-6">
-                <label for="senha" class="block text-gray-700 text-sm font-bold mb-2">Senha</label>
-                <input type="password" id="senha" name="senha" required 
-                       class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent" 
-                       placeholder="********">
-                <!-- Adicionar link "Esqueci minha senha" se necessário -->
-            </div>
-            
-            <div class="flex items-center justify-between mb-6">
-                <button type="submit" 
-                        class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
-                    Entrar
-                </button>
-            </div>
-            <div class="text-center mt-6">
-              <p class="text-sm text-gray-600">
-                  Não tem uma conta? <a href="registro.html" class="text-blue-500 hover:text-blue-700">Registre-se</a>
-              </p>
-            </div>
+            <form id="login-form">
+                <div class="mb-6">
+                    <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="email" name="email" required 
+                           class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent" 
+                           placeholder="seuemail@exemplo.com">
+                </div>
+                
+                <div class="mb-6">
+                    <label for="senha" class="block text-gray-700 text-sm font-bold mb-2">Senha</label>
+                    <input type="password" id="senha" name="senha" required 
+                           class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent" 
+                           placeholder="********">
+                    </div>
+                
+                <div id="error-message" class="text-red-500 text-sm text-center mb-4" style="display: none;">
+                    </div>
 
-            <div id="error-message" class="text-red-500 text-sm text-center mb-4" style="display: none;">
-                <!-- Mensagens de erro serão inseridas aqui via JS -->
-            </div>
+                <div class="flex items-center justify-between mb-6">
+                    <button type="submit" 
+                            class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+                        Entrar
+                    </button>
+                </div>
 
-            <p class="text-center text-gray-600 text-xs">
-                &copy;2025 Farmácia A Barateira. Todos os direitos reservados.
-            </p>
-        </form>
+                <div class="text-center mt-6">
+                    <p class="text-sm text-gray-600">
+                        Não tem uma conta? <a href="registro.html" class="text-blue-500 hover:text-blue-700">Registre-se</a>
+                    </p>
+                </div>
+    
+                <p class="text-center text-gray-600 text-xs mt-8">
+                    &copy;2025 Farmácia A Barateira. Todos os direitos reservados.
+                </p>
+            </form>
+        </div>
     </div>
 
-    <!-- Link para o arquivo JavaScript -->
+    <script src="global.js"></script>
     <script src="script.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("Página carregada: " + document.title);
-  
-  // Garantir que os links do menu funcionem
-  document.querySelectorAll('aside a').forEach(link => {
-    link.addEventListener('click', function(e) {
-      console.log("Clicou em: " + this.href);
-      // Não previne o comportamento padrão para permitir a navegação
-    });
-  });
-});
-</script>
-
-<script src="fix_menu.js"></script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Página carregada: " + document.title);
+        });
+    </script>
+    <script src="fix_menu.js"></script>
 
 </body>
 </html>
-
