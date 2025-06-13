@@ -354,9 +354,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutButton = document.getElementById("logout-button");
     if(logoutButton) {
         logoutButton.addEventListener("click", () => {
-            console.log("Logout solicitado.");
-            alert("Logout realizado!");
-            window.location.href = "index.html";
+            alert("Você foi desconectado.");
+            window.location.href = "index.html"; 
         });
     }
+
 });

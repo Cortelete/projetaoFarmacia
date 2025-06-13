@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('authToken');
     const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
 
-    // --- ELEMENTOS DO DOM ---
+    // --- ELEMENTOS DO DOM (DECLARADOS AQUI, NO INÍCIO DO DOMContentLoaded) ---
+    // ESTA É A CORREÇÃO: DECLARAR UMA ÚNICA VEZ AQUI
     const clienteSearchInput = document.getElementById("cliente-search");
     const clienteSearchResults = document.getElementById("cliente-search-results");
     const clienteSelecionadoDiv = document.getElementById("cliente-selecionado");
@@ -20,17 +21,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const descontoInput = document.getElementById('desconto');
     const carrinhoTotalGeralEl = document.getElementById("carrinho-total-geral");
     
-    // Seleciona todos os botões de finalizar e cancelar
-    const finalizarVendaBtn = document.getElementById("finalizar-venda-button");
-    const finalizarVendaBtnFinal = document.getElementById("finalizar-venda-button-final");
+    // Seleciona os botões
     const cancelarVendaBtn = document.getElementById("cancelar-venda-button");
-    const cancelarVendaBtnFinal = document.getElementById("cancelar-venda-button-final");
-
+    const realizarPagamentoBtn = document.getElementById("realizar-pagamento-button");
+    const finalizarVendaBtn = document.getElementById("finalizar-venda-button"); // Botão "Finalizar Venda (Antigo)"
 
     // --- ESTADO DA APLICAÇÃO ---
     let carrinho = [];
     let clienteAtual = null;
-    let vendedorAtualId = usuarioLogado ? usuarioLogado.id : null;
+    let vendedorAtualId = usuarioLogado ? usuarioLogado.id : null; 
     let produtosDisponiveis = [];
     let clientesDisponiveis = [];
     let debounceTimer;
@@ -42,58 +41,79 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- FUNÇÕES DE INICIALIZAÇÃO ---
     async function inicializarPagina() {
         if (!usuarioLogado) {
-            showCustomAlert("Usuário não identificado. Faça login novamente.", "error");
+            showCustomAlert("Usuário não identificado. Faça login novamente.", "error"); 
             return;
         }
         await carregarVendedores();
         await carregarTodosOsProdutos();
         await carregarTodosOsClientes();
-        configurarEventListeners();
+        // Apenas configurar listeners, as variáveis do DOM já estão declaradas acima.
+        configurarEventListeners(); 
         renderizarCarrinho();
     }
 
     async function carregarVendedores() {
         try {
-            const response = await fetch(`${API_BASE_URL}/usuarios`, { headers: { 'Authorization': `Bearer ${token}` }});
+            const response = await fetch(`${API_BASE_URL}/usuarios`, { 
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (!response.ok) throw new Error('Falha ao carregar vendedores.');
             const usuarios = await response.json();
             
-            vendedorSelect.innerHTML = '';
-            usuarios.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = `${user.nome} (${user.cargo})`;
-                if (user.id === vendedorAtualId) option.selected = true;
-                vendedorSelect.appendChild(option);
-            });
+            // vendedorSelect já está declarado no escopo acima
+            if (vendedorSelect) { 
+                vendedorSelect.innerHTML = '';
+                usuarios.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = `${user.nome} (${user.cargo})`;
+                    if (user.id === vendedorAtualId) option.selected = true;
+                    vendedorSelect.appendChild(option);
+                });
+            } else {
+                console.error("ERRO: Elemento 'vendedor-select' não encontrado para carregar vendedores.");
+            }
         } catch (error) {
-            console.error(error);
+            console.error("Erro ao carregar vendedores:", error);
+            showCustomAlert("Erro ao carregar vendedores. Verifique sua conexão e login.", "error");
         }
     }
 
     async function carregarTodosOsProdutos() {
         try {
-            const response = await fetch(`${API_BASE_URL}/medicamentos`, { headers: { 'Authorization': `Bearer ${token}` }});
+            const response = await fetch(`${API_BASE_URL}/medicamentos`, { 
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (!response.ok) throw new Error('Falha ao carregar produtos do estoque.');
             produtosDisponiveis = await response.json();
             filtrarErenderizarProdutos();
         } catch (error) {
-            resultadosBuscaContainer.innerHTML = `<p class="col-span-full text-center text-red-500">${error.message}</p>`;
+            console.error("Erro ao carregar produtos:", error);
+            if (resultadosBuscaContainer) { // Verificação de segurança, resultadosBuscaContainer já está declarado
+                 resultadosBuscaContainer.innerHTML = `<p class="col-span-full text-center text-red-500">${error.message}</p>`; 
+            }
+            showCustomAlert("Erro ao carregar produtos. Verifique sua conexão e login.", "error");
         }
     }
 
     async function carregarTodosOsClientes() {
         try {
-            const response = await fetch(`${API_BASE_URL}/clientes`, { headers: { 'Authorization': `Bearer ${token}` }});
+            const response = await fetch(`${API_BASE_URL}/clientes`, { 
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (!response.ok) throw new Error('Falha ao carregar clientes.');
             clientesDisponiveis = await response.json();
         } catch (error) {
-            console.error(error);
+            console.error("Erro ao carregar clientes:", error);
+            showCustomAlert("Erro ao carregar clientes. Verifique sua conexão e login.", "error");
         }
     }
 
     // --- LÓGICA DE BUSCA, RENDERIZAÇÃO E PAGINAÇÃO ---
+    // As funções já podem acessar as constantes de DOM porque estão no mesmo escopo
     function buscarClientes(termo) {
+        if (!clienteSearchResults) return; // Verificação de segurança
+
         if (termo.length < 2) {
             clienteSearchResults.classList.add('hidden');
             return;
@@ -116,6 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function selecionarCliente(cliente) {
+        if (!clienteSearchInput || !clienteSelecionadoDiv || !clienteSearchResults) return; 
+
         clienteAtual = cliente;
         clienteSearchInput.value = '';
         clienteSearchResults.classList.add('hidden');
@@ -133,12 +155,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function removerCliente() {
+        if (!clienteSelecionadoDiv) return; 
+
         clienteAtual = null;
         clienteSelecionadoDiv.classList.add('hidden');
         clienteSelecionadoDiv.innerHTML = '';
     }
 
     function filtrarErenderizarProdutos() {
+        if (!produtoSearchInput) return; 
+
         const termoBusca = produtoSearchInput.value.toLowerCase();
         produtosFiltrados = produtosDisponiveis.filter(p => 
             p.nome.toLowerCase().includes(termoBusca) || 
@@ -149,6 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function renderizarPaginaDeProdutos() {
+        if (!resultadosBuscaContainer || !paginationContainer) return; 
+
         const start = paginaAtual * ITENS_POR_PAGINA;
         const end = start + ITENS_POR_PAGINA;
         const produtosDaPagina = produtosFiltrados.slice(start, end);
@@ -157,6 +185,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderizarResultadosBusca(produtos) {
+        if (!resultadosBuscaContainer) return; 
+
         resultadosBuscaContainer.innerHTML = "";
         if (produtos.length === 0) {
             resultadosBuscaContainer.innerHTML = `<p class="col-span-full text-center text-gray-500 dark:text-gray-400">Nenhum produto encontrado.</p>`;
@@ -194,6 +224,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderizarControlesDePaginacao() {
+        const paginationContainer = document.getElementById("pagination-container"); 
+        if (!paginationContainer) return; 
+
         paginationContainer.innerHTML = '';
         const totalPaginas = Math.ceil(produtosFiltrados.length / ITENS_POR_PAGINA);
         if (totalPaginas <= 1) return;
@@ -224,10 +257,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!produto) return;
 
         const itemExistente = carrinho.find(item => item.id === produtoId);
-        const estoqueDisponivel = produto.estoqueAtual - (itemExistente ? itemExistente.quantidade : 0);
+        const estoqueDisponivelParaAdicionar = produto.estoqueAtual - (itemExistente ? itemExistente.quantidade : 0);
 
-        if (quantidade > estoqueDisponivel) {
-            showCustomAlert(`Apenas ${estoqueDisponivel} unidades disponíveis em estoque.`, 'error');
+        if (quantidade > estoqueDisponivelParaAdicionar) {
+            showCustomAlert(`Apenas ${estoqueDisponivelParaAdicionar} unidades de "${produto.nome}" disponíveis em estoque para adicionar.`, 'error');
             return;
         }
 
@@ -243,12 +276,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const itemIndex = carrinho.findIndex(item => item.id === produtoId);
         if (itemIndex === -1) return;
 
-        const produto = produtosDisponiveis.find(p => p.id === produtoId);
-        if (novaQuantidade > produto.estoqueAtual) {
-            showCustomAlert(`Estoque máximo (${produto.estoqueAtual}) atingido.`, 'error');
-            carrinho[itemIndex].quantidade = produto.estoqueAtual;
+        const produtoNoEstoque = produtosDisponiveis.find(p => p.id === produtoId);
+        
+        if (novaQuantidade > produtoNoEstoque.estoqueAtual) {
+            showCustomAlert(`Estoque máximo de "${produtoNoEstoque.nome}" (${produtoNoEstoque.estoqueAtual}) atingido.`, 'error');
+            carrinho[itemIndex].quantidade = produtoNoEstoque.estoqueAtual; 
         } else if (novaQuantidade < 1) {
-            carrinho.splice(itemIndex, 1);
+            carrinho.splice(itemIndex, 1); 
         } else {
             carrinho[itemIndex].quantidade = novaQuantidade;
         }
@@ -256,6 +290,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function renderizarCarrinho() {
+        // As variáveis do DOM já estão declaradas no escopo pai
+        if (!carrinhoContainer || !carrinhoSubtotalEl || !descontoInput || !carrinhoTotalGeralEl) return; 
+
         carrinhoContainer.innerHTML = '';
         if (carrinho.length === 0) {
             carrinhoContainer.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 p-4">Carrinho vazio.</p>`;
@@ -279,6 +316,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function calcularTotais() {
+        // As variáveis do DOM já estão declaradas no escopo pai
+        if (!carrinhoSubtotalEl || !descontoInput || !carrinhoTotalGeralEl) return; 
+
         const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
         const descontoPercent = parseFloat(descontoInput.value) || 0;
         const valorDesconto = (subtotal * descontoPercent) / 100;
@@ -288,31 +328,28 @@ document.addEventListener("DOMContentLoaded", () => {
         carrinhoTotalGeralEl.textContent = formatarMoeda(total);
     }
     
-    // --- NOVO FLUXO DE FINALIZAÇÃO DE VENDA ---
-    function iniciarFinalizacao() {
+    // --- FLUXO DE FINALIZAÇÃO DE VENDA (COM MODAIS) ---
+    function iniciarFluxoPagamento() { 
         if (carrinho.length === 0) {
-            return showCustomAlert("O carrinho está vazio.", "error");
+            showCustomAlert("O carrinho está vazio. Adicione produtos antes de finalizar.", "error");
+            return;
         }
-        const formaPagamento = document.querySelector('input[name="forma-pagamento"]:checked');
-        if (!formaPagamento) {
-            return showCustomAlert("Por favor, selecione uma forma de pagamento.", "error");
-        }
-        
-        abrirModalConfirmacao();
+        abrirModalRevisaoVenda();
     }
 
-    function abrirModalConfirmacao() {
+    // Modal 1: Revisão da Compra
+    function abrirModalRevisaoVenda() {
         const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
-        const descontoPercent = parseFloat(descontoInput.value) || 0;
+        const descontoPercent = parseFloat(descontoInput.value) || 0; // descontoInput já está no escopo pai
         const total = subtotal - ((subtotal * descontoPercent) / 100);
         
-        const modalAntigo = document.getElementById('confirm-venda-overlay');
+        const modalAntigo = document.getElementById('confirm-revisao-overlay');
         if(modalAntigo) modalAntigo.remove();
 
         const modalHtml = `
-            <div id="confirm-venda-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50 p-4">
+            <div id="confirm-revisao-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50 p-4">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 w-full max-w-sm text-center">
-                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Confirmar Venda</h3>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Revisar Venda</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Por favor, revise os totais antes de prosseguir.</p>
                     <div class="text-left space-y-2 bg-gray-50 dark:bg-gray-700 p-4 rounded-md mb-6">
                         <div class="flex justify-between"><span>Cliente:</span><span class="font-medium">${clienteAtual ? clienteAtual.nome : 'Consumidor Final'}</span></div>
@@ -321,59 +358,128 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="flex justify-between text-lg font-bold"><span>Total a Pagar:</span><span class="text-green-600 dark:text-green-400">${formatarMoeda(total)}</span></div>
                     </div>
                     <div class="space-y-3">
-                         <button id="btn-pagamento-realizado" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors">Confirmar e Seguir para Pagamento</button>
-                         <button id="btn-cancelar-confirmacao" class="w-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded transition-colors">Voltar</button>
+                           <button id="btn-prosseguir-pagamento" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded transition-colors">Prosseguir para Pagamento</button>
+                           <button id="btn-cancelar-revisao" class="w-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded transition-colors">Voltar</button>
                     </div>
                 </div>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-        document.getElementById('btn-pagamento-realizado').addEventListener('click', processarPagamentoEregistrarVenda);
-        document.getElementById('btn-cancelar-confirmacao').addEventListener('click', () => {
-            document.getElementById('confirm-venda-overlay').remove();
+        document.getElementById('btn-prosseguir-pagamento').addEventListener('click', () => {
+            document.getElementById('confirm-revisao-overlay').remove(); 
+            abrirModalPagamento(total); 
+        });
+        document.getElementById('btn-cancelar-revisao').addEventListener('click', () => {
+            document.getElementById('confirm-revisao-overlay').remove();
+        });
+    }
+
+    // Modal 2: Opções de Pagamento
+    function abrirModalPagamento(totalAPagar) {
+        const modalAntigo = document.getElementById('modal-pagamento-overlay');
+        if(modalAntigo) modalAntigo.remove();
+
+        const modalHtml = `
+            <div id="modal-pagamento-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50 p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 w-full max-w-sm text-center">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Finalizar Pagamento</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Total a pagar: <span class="font-bold text-green-600 dark:text-green-400">${formatarMoeda(totalAPagar)}</span></p>
+                    
+                    <div class="text-left space-y-3 mb-6">
+                        <label class="flex items-center space-x-2 p-3 border dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 has-[:checked]:bg-purple-50 dark:has-[:checked]:bg-purple-900/30 has-[:checked]:border-purple-500 transition-all">
+                            <input type="radio" name="forma-pagamento-modal" value="Dinheiro" class="form-radio h-4 w-4 text-purple-600 focus:ring-purple-500" checked>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Dinheiro</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 has-[:checked]:bg-purple-50 dark:has-[:checked]:bg-purple-900/30 has-[:checked]:border-purple-500 transition-all">
+                            <input type="radio" name="forma-pagamento-modal" value="Cartão de Crédito" class="form-radio h-4 w-4 text-purple-600 focus:ring-purple-500">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Crédito</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 has-[:checked]:bg-purple-50 dark:has-[:checked]:bg-purple-900/30 has-[:checked]:border-purple-500 transition-all">
+                            <input type="radio" name="forma-pagamento-modal" value="Cartão de Débito" class="form-radio h-4 w-4 text-purple-600 focus:ring-purple-500">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Débito</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 has-[:checked]:bg-purple-50 dark:has-[:checked]:bg-purple-900/30 has-[:checked]:border-purple-500 transition-all">
+                            <input type="radio" name="forma-pagamento-modal" value="PIX" class="form-radio h-4 w-4 text-purple-600 focus:ring-purple-500">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">PIX</span>
+                        </label>
+                    </div>
+
+                    <div class="space-y-3">
+                           <button id="btn-pagamento-efetuado" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors">Pagamento Efetuado</button>
+                           <button id="btn-cancelar-pagamento" class="w-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded transition-colors">Voltar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        document.getElementById('btn-pagamento-efetuado').addEventListener('click', processarPagamentoEregistrarVenda);
+        document.getElementById('btn-cancelar-pagamento').addEventListener('click', () => {
+            document.getElementById('modal-pagamento-overlay').remove();
+            abrirModalRevisaoVenda(); 
         });
     }
 
     async function processarPagamentoEregistrarVenda() {
-        document.getElementById('confirm-venda-overlay').remove();
+        // Obtenha os elementos aqui
+        const descontoInput = document.getElementById('desconto'); // Obtenha o elemento
+        const observacoesInput = document.getElementById('observacoes'); // Obtenha o elemento
+
+        document.getElementById('modal-pagamento-overlay').remove(); 
 
         const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
-        const descontoPercent = parseFloat(descontoInput.value) || 0;
-        const total = subtotal - ((subtotal * descontoPercent) / 100);
+        const descontoPercent = parseFloat(descontoInput ? descontoInput.value : 0) || 0; // Acesso seguro
+        const total = subtotal - (subtotal * descontoPercent / 100);
         const totais = { subtotal, descontoPercent, total };
+
+        const formaPagamentoSelecionada = document.querySelector('input[name="forma-pagamento-modal"]:checked')?.value || "Não Informado";
 
         const vendaData = {
             cliente_id: clienteAtual ? clienteAtual.id : null,
-            usuario_id: vendedorAtualId,
+            usuario_id: vendedorAtualId, 
             valorTotal: total,
-            itens: carrinho.map(item => ({ medicamento_id: item.id, quantidade: item.quantidade, precoUnitario: item.preco })),
-            formaPagamento: document.querySelector('input[name="forma-pagamento"]:checked').value,
-            observacoes: document.getElementById('observacoes').value
+            itens: carrinho.map(item => ({ 
+                medicamento_id: item.id, 
+                quantidade: item.quantidade, 
+                precoUnitario: item.preco 
+            })),
+            formaPagamento: formaPagamentoSelecionada, 
+            observacoes: observacoesInput ? observacoesInput.value : '' // Acesso seguro
         };
 
         try {
             const response = await fetch(`${API_BASE_URL}/vendas`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${token}` 
+                },
                 body: JSON.stringify(vendaData)
             });
             const result = await response.json();
-            if (!response.ok) throw new Error(result.erro || 'Erro ao registrar venda no backend.');
+
+            if (!response.ok) {
+                const errorMessage = result.erro || `Erro ${response.status} ao registrar venda.`;
+                throw new Error(errorMessage);
+            }
             
             gerarComprovante(result, carrinho, totais, vendaData);
-            // Removido o alerta daqui para não sobrepor o comprovante
             
             limparVenda();
-            await carregarTodosOsProdutos();
+            await carregarTodosOsProdutos(); 
 
         } catch (error) {
-            showCustomAlert(error.message, 'error');
+            console.error("Erro ao finalizar venda:", error);
+            showCustomAlert(error.message, 'error'); 
         }
     }
 
     function gerarComprovante(vendaRegistrada, itensVendidos, totais, vendaInfo) {
-        const vendedor = vendedorSelect.options[vendedorSelect.selectedIndex].text.split(' (')[0];
+        // vendedorSelect já está declarado no escopo pai
+        if (!vendedorSelect) return; 
+
+        const vendedor = vendedorSelect.options[vendedorSelect.selectedIndex]?.textContent.split(' (')[0] || 'Desconhecido';
         const dataVenda = new Date().toLocaleString('pt-BR');
 
         let itensHtml = '';
@@ -416,85 +522,152 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- FUNÇÕES DE APOIO ---
+    // A função limparVenda já acessa descontoInput e observacoesInput de forma segura.
     function limparVenda() {
+        const observacoesInput = document.getElementById('observacoes'); // Acesso aqui também
+        const formaPagamentoRadios = document.querySelectorAll('input[name="forma-pagamento"]'); // Acesso aqui também
+
         carrinho = [];
         removerCliente();
-        descontoInput.value = 0;
-        document.getElementById('observacoes').value = '';
-        const formaPagamento = document.querySelector('input[name="forma-pagamento"]:checked');
-        if (formaPagamento) formaPagamento.checked = false;
+        // descontoInput já está no escopo, então basta usar
+        if (descontoInput) descontoInput.value = 0; 
+        if (observacoesInput) observacoesInput.value = '';
+        formaPagamentoRadios.forEach(radio => radio.checked = false);
         renderizarCarrinho();
-        filtrarErenderizarProdutos();
+        filtrarErenderizarProdutos(); 
     }
     
-    function formatarMoeda(valor) { return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+    function formatarMoeda(valor) { 
+        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); 
+    }
 
     // --- CONFIGURAÇÃO DOS EVENT LISTENERS ---
+    // Esta função apenas ANEXA LISTENERS, não precisa declarar elementos aqui novamente
     function configurarEventListeners() {
-        // Debounce para otimizar a busca
-        clienteSearchInput.addEventListener('keyup', (e) => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => buscarClientes(e.target.value), 300);
-        });
+        // Debug para verificar se os elementos foram encontrados no escopo pai
+        console.log("DEBUG: clienteSearchInput", clienteSearchInput);
+        console.log("DEBUG: vendedorSelect", vendedorSelect);
+        console.log("DEBUG: realizarPagamentoBtn", realizarPagamentoBtn);
+        console.log("DEBUG: cancelarVendaBtn", cancelarVendaBtn);
 
-        produtoSearchInput.addEventListener('keyup', (e) => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => filtrarErenderizarProdutos(), 300);
-        });
 
-        resultadosBuscaContainer.addEventListener('click', e => {
-            const button = e.target.closest('button[data-action="adicionar"]');
-            if (button) {
-                const produtoId = parseInt(button.dataset.id, 10);
-                const qtdInput = document.getElementById(`qtd-${produtoId}`);
-                const quantidade = parseInt(qtdInput.value, 10);
-                adicionarAoCarrinho(produtoId, quantidade);
-                qtdInput.value = 1;
-            }
-        });
+        // --- Adicionar Event Listeners ---
+        if (clienteSearchInput) {
+            clienteSearchInput.addEventListener('keyup', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => buscarClientes(e.target.value), 300);
+            });
+        }
+
+        if (produtoSearchInput) {
+            produtoSearchInput.addEventListener('keyup', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => filtrarErenderizarProdutos(), 300);
+            });
+        }
+
+        if (resultadosBuscaContainer) {
+            resultadosBuscaContainer.addEventListener('click', e => {
+                const button = e.target.closest('button[data-action="adicionar"]');
+                if (button) {
+                    const produtoId = parseInt(button.dataset.id, 10);
+                    // O input de quantidade é dinâmico, acessado por ID
+                    const qtdInput = document.getElementById(`qtd-${produtoId}`); 
+                    const quantidade = parseInt(qtdInput.value, 10);
+                    adicionarAoCarrinho(produtoId, quantidade);
+                    qtdInput.value = 1; 
+                }
+            });
+        }
         
-        carrinhoContainer.addEventListener('click', e => {
-            const button = e.target.closest('button[data-action="remover-item"]');
-            if(button) {
-                alterarQuantidadeCarrinho(parseInt(button.dataset.id, 10), 0);
-            }
-        });
+        if (carrinhoContainer) {
+            carrinhoContainer.addEventListener('click', e => {
+                const button = e.target.closest('button[data-action="remover-item"]');
+                if(button) {
+                    alterarQuantidadeCarrinho(parseInt(button.dataset.id, 10), 0); 
+                }
+            });
+            
+            carrinhoContainer.addEventListener('input', e => {
+                if(e.target.matches('input[type="number"]')) {
+                    // Lógica robusta para obter o produtoId do input dinâmico
+                    const productIdMatch = e.target.id.match(/^qtd-(\d+)$/);
+                    let produtoId = null;
+                    if (productIdMatch) {
+                        produtoId = parseInt(productIdMatch[1], 10);
+                    } else if (e.target.dataset.id) { 
+                        produtoId = parseInt(e.target.dataset.id, 10);
+                    }
+
+                    const novaQuantidade = parseInt(e.target.value, 10);
+                    if (!isNaN(produtoId) && produtoId !== null) {
+                        alterarQuantidadeCarrinho(produtoId, novaQuantidade);
+                    }
+                }
+            });
+        }
+
+        if (clienteSelecionadoDiv) {
+            clienteSelecionadoDiv.addEventListener('click', e => {
+                if (e.target.closest('button[data-action="remover-cliente"]')) removerCliente();
+            });
+        }
+
+        if (vendedorSelect) {
+            vendedorSelect.addEventListener('change', (e) => { vendedorAtualId = parseInt(e.target.value, 10); });
+        }
         
-        carrinhoContainer.addEventListener('input', e => {
-             if(e.target.matches('input[type="number"]')) {
-                const novaQuantidade = parseInt(e.target.value, 10);
-                const produtoId = parseInt(e.target.dataset.id, 10);
-                alterarQuantidadeCarrinho(produtoId, novaQuantidade);
-            }
-        });
+        if (novoClienteBtn) {
+            novoClienteBtn.addEventListener('click', () => { window.open('clientes.html', '_blank'); });
+        }
 
-        
+        if (descontoInput) { // descontoInput agora é acessível
+            descontoInput.addEventListener('input', calcularTotais);
+        } else {
+            console.error("ERRO: Elemento 'desconto' não encontrado.");
+        }
 
-        clienteSelecionadoDiv.addEventListener('click', e => {
-            if (e.target.closest('button[data-action="remover-cliente"]')) removerCliente();
-        });
+        // Listener para o NOVO botão "Realizar Pagamento"
+        if (realizarPagamentoBtn) {
+            realizarPagamentoBtn.addEventListener('click', iniciarFluxoPagamento);
+            console.log("DEBUG: Listener de click adicionado ao Realizar Pagamento.");
+        } else {
+            console.error("ERRO: Botão 'realizar-pagamento-button' não encontrado no DOM. Verifique o HTML.");
+        }
 
-        vendedorSelect.addEventListener('change', (e) => { vendedorAtualId = parseInt(e.target.value, 10); });
-        
-        novoClienteBtn.addEventListener('click', () => { window.open('clientes.html', '_blank'); });
+        // Listener para o botão "Cancelar Venda"
+        if (cancelarVendaBtn) {
+            cancelarVendaBtn.addEventListener('click', () => {
+                if (carrinho.length > 0 && confirm("Tem certeza que deseja cancelar e limpar a venda atual?")) {
+                    limparVenda();
+                } else if (carrinho.length === 0) {
+                    limparVenda(); 
+                }
+            });
+        } else {
+            console.error("ERRO: Botão 'cancelar-venda-button' não encontrado no DOM. Verifique o HTML.");
+        }
 
-        descontoInput.addEventListener('input', calcularTotais);
-        finalizarVendaBtn.addEventListener('click', iniciarFinalizacao);
-        cancelarVendaBtn.addEventListener('click', () => {
-            if (carrinho.length > 0 && confirm("Tem certeza que deseja cancelar e limpar a venda atual?")) {
-                limparVenda();
-            } else if (carrinho.length === 0) {
-                limparVenda();
-            }
-        });
+        // O botão 'finalizar-venda-button' (Finalizar Venda - Antigo)
+        // Se você quiser que ele faça o mesmo que "Realizar Pagamento", descomente a linha abaixo.
+        // if (finalizarVendaBtn) {
+        //     finalizarVendaBtn.addEventListener('click', iniciarFluxoPagamento); 
+        // }
     }
-    const logoutButton = document.getElementById("logout-button");
+
+    // Lógica de Logout
+    const logoutButton = document.getElementById("logout-button"); // Obtido aqui
     if(logoutButton) {
         logoutButton.addEventListener("click", () => {
+            console.log("Logout solicitado.");
             alert("Você foi desconectado.");
+            localStorage.removeItem('authToken'); 
+            localStorage.removeItem('usuarioLogado');
             window.location.href = "index.html"; 
         });
     }
+
     // --- INICIALIZAÇÃO DA PÁGINA ---
+    // inicializarPagina() é chamada aqui, no escopo global de DOMContentLoaded.
     inicializarPagina();
 });
