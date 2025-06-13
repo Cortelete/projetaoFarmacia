@@ -63,18 +63,20 @@ db.serialize(() => {
   });
 
   // Tabela vendas
-  db.run(`CREATE TABLE IF NOT EXISTS vendas (
+   db.run(`CREATE TABLE IF NOT EXISTS vendas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    cliente_id INTEGER, -- Pode ser NULL se não for identificado
+    cliente_id INTEGER, 
     usuario_id INTEGER NOT NULL,
     dataVenda DATETIME DEFAULT CURRENT_TIMESTAMP,
     valorTotal REAL NOT NULL CHECK(valorTotal >= 0),
-    FOREIGN KEY (cliente_id) REFERENCES clientes (id) ON DELETE SET NULL, -- Se deletar cliente, venda fica sem cliente
-    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE RESTRICT -- Impede deletar usuário com vendas
+    formaPagamento TEXT, -- << NOVA COLUNA
+    observacoes TEXT,      -- << NOVA COLUNA
+    FOREIGN KEY (cliente_id) REFERENCES clientes (id) ON DELETE SET NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE RESTRICT
   )`, (err) => {
     if (err) console.error("Erro ao criar tabela vendas:", err.message); else console.log("Tabela vendas OK.");
   });
-
+  
   // Tabela venda_itens
   db.run(`CREATE TABLE IF NOT EXISTS venda_itens (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

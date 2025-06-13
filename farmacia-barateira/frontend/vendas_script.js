@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const novoClienteBtn = document.getElementById("novo-cliente-button");
     
     const vendedorSelect = document.getElementById('vendedor-select');
-
     const produtoSearchInput = document.getElementById("produto-search");
     const resultadosBuscaContainer = document.getElementById("resultados-busca");
     const paginationContainer = document.getElementById("pagination-container");
@@ -21,8 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const descontoInput = document.getElementById('desconto');
     const carrinhoTotalGeralEl = document.getElementById("carrinho-total-geral");
     
+    // Seleciona todos os botões de finalizar e cancelar
     const finalizarVendaBtn = document.getElementById("finalizar-venda-button");
+    const finalizarVendaBtnFinal = document.getElementById("finalizar-venda-button-final");
     const cancelarVendaBtn = document.getElementById("cancelar-venda-button");
+    const cancelarVendaBtnFinal = document.getElementById("cancelar-venda-button-final");
+
 
     // --- ESTADO DA APLICAÇÃO ---
     let carrinho = [];
@@ -32,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let clientesDisponiveis = [];
     let debounceTimer;
 
-    // --- ESTADO DA PAGINAÇÃO ---
     const ITENS_POR_PAGINA = 8;
     let paginaAtual = 0;
     let produtosFiltrados = [];
@@ -90,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- FUNÇÕES DE BUSCA, RENDERIZAÇÃO E PAGINAÇÃO ---
+    // --- LÓGICA DE BUSCA, RENDERIZAÇÃO E PAGINAÇÃO ---
     function buscarClientes(termo) {
         if (termo.length < 2) {
             clienteSearchResults.classList.add('hidden');
@@ -286,70 +288,68 @@ document.addEventListener("DOMContentLoaded", () => {
         carrinhoTotalGeralEl.textContent = formatarMoeda(total);
     }
     
-    // --- FUNÇÃO DE IMPRESSÃO ---
-    function imprimirComprovante(vendaRegistrada, itensVendidos, totais) {
-        const vendedorNome = vendedorSelect.options[vendedorSelect.selectedIndex].text.split(' (')[0];
-        const now = new Date();
-
-        let itensHtml = '';
-        itensVendidos.forEach(item => {
-            itensHtml += `
-                <tr>
-                    <td style="padding: 2px 0;">${item.quantidade}x</td>
-                    <td style="padding: 2px 8px;">${item.nome}</td>
-                    <td style="text-align:right; padding: 2px 0;">${formatarMoeda(item.preco * item.quantidade)}</td>
-                </tr>
-            `;
-        });
-
-        const comprovanteHtml = `
-            <html><head><title>Comprovante Venda #${vendaRegistrada.vendaId}</title><style>
-                body { font-family: 'Courier New', monospace; margin: 0; padding: 10px; font-size: 10px; color: #000; }
-                .comprovante { width: 280px; margin: auto; } .header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px; margin-bottom: 5px; }
-                h2, p { margin: 0 0 3px 0; } .item-table { width: 100%; border-collapse: collapse; margin-top: 5px;}
-                .total-section { border-top: 1px dashed #000; padding-top: 5px; margin-top: 5px;}
-                .total-section div { display: flex; justify-content: space-between; }
-            </style></head><body><div class="comprovante">
-                <div class="header"><h2>Farmácia A Barateira</h2><p>Rua Principal, 123</p><p>CNPJ: 00.123.456/0001-78</p></div>
-                <p>CUPOM NAO FISCAL</p><p>Venda: ${vendaRegistrada.vendaId} | Data: ${now.toLocaleString('pt-BR')}</p>
-                <p>Vendedor: ${vendedorNome}</p><p>Cliente: ${clienteAtual ? clienteAtual.nome : 'Consumidor Final'}</p>
-                <table class="item-table"><tbody>${itensHtml}</tbody></table>
-                <div class="total-section">
-                    <div><span>Subtotal:</span><span>${formatarMoeda(totais.subtotal)}</span></div>
-                    <div><span>Desconto:</span><span>${totais.descontoPercent}%</span></div>
-                    <div style="font-weight: bold; font-size: 14px;"><span>TOTAL:</span><span>${formatarMoeda(totais.total)}</span></div>
-                </div><p style="text-align:center; margin-top: 15px;">Obrigado!</p>
-            </div></body></html>`;
+    // --- NOVO FLUXO DE FINALIZAÇÃO DE VENDA ---
+    function iniciarFinalizacao() {
+        if (carrinho.length === 0) {
+            return showCustomAlert("O carrinho está vazio.", "error");
+        }
+        const formaPagamento = document.querySelector('input[name="forma-pagamento"]:checked');
+        if (!formaPagamento) {
+            return showCustomAlert("Por favor, selecione uma forma de pagamento.", "error");
+        }
         
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(comprovanteHtml);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => { printWindow.print(); printWindow.close(); }, 250);
+        abrirModalConfirmacao();
     }
 
-    // --- AÇÕES FINAIS ---
-    function limparVenda() {
-        carrinho = [];
-        removerCliente();
-        descontoInput.value = 0;
-        document.getElementById('observacoes').value = '';
-        renderizarCarrinho();
-        filtrarErenderizarProdutos();
-    }
-    
-    async function finalizarVenda() {
-        if (carrinho.length === 0) return showCustomAlert("O carrinho está vazio.", "error");
-        
+    function abrirModalConfirmacao() {
         const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
         const descontoPercent = parseFloat(descontoInput.value) || 0;
         const total = subtotal - ((subtotal * descontoPercent) / 100);
+        
+        const modalAntigo = document.getElementById('confirm-venda-overlay');
+        if(modalAntigo) modalAntigo.remove();
+
+        const modalHtml = `
+            <div id="confirm-venda-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50 p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 w-full max-w-sm text-center">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Confirmar Venda</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Por favor, revise os totais antes de prosseguir.</p>
+                    <div class="text-left space-y-2 bg-gray-50 dark:bg-gray-700 p-4 rounded-md mb-6">
+                        <div class="flex justify-between"><span>Cliente:</span><span class="font-medium">${clienteAtual ? clienteAtual.nome : 'Consumidor Final'}</span></div>
+                        <div class="flex justify-between"><span>Subtotal:</span><span class="font-medium">${formatarMoeda(subtotal)}</span></div>
+                        <div class="flex justify-between"><span>Desconto:</span><span class="font-medium">${descontoPercent}%</span></div>
+                        <div class="flex justify-between text-lg font-bold"><span>Total a Pagar:</span><span class="text-green-600 dark:text-green-400">${formatarMoeda(total)}</span></div>
+                    </div>
+                    <div class="space-y-3">
+                         <button id="btn-pagamento-realizado" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors">Confirmar e Seguir para Pagamento</button>
+                         <button id="btn-cancelar-confirmacao" class="w-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded transition-colors">Voltar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        document.getElementById('btn-pagamento-realizado').addEventListener('click', processarPagamentoEregistrarVenda);
+        document.getElementById('btn-cancelar-confirmacao').addEventListener('click', () => {
+            document.getElementById('confirm-venda-overlay').remove();
+        });
+    }
+
+    async function processarPagamentoEregistrarVenda() {
+        document.getElementById('confirm-venda-overlay').remove();
+
+        const subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+        const descontoPercent = parseFloat(descontoInput.value) || 0;
+        const total = subtotal - ((subtotal * descontoPercent) / 100);
+        const totais = { subtotal, descontoPercent, total };
 
         const vendaData = {
             cliente_id: clienteAtual ? clienteAtual.id : null,
             usuario_id: vendedorAtualId,
             valorTotal: total,
-            itens: carrinho.map(item => ({ medicamento_id: item.id, quantidade: item.quantidade, precoUnitario: item.preco }))
+            itens: carrinho.map(item => ({ medicamento_id: item.id, quantidade: item.quantidade, precoUnitario: item.preco })),
+            formaPagamento: document.querySelector('input[name="forma-pagamento"]:checked').value,
+            observacoes: document.getElementById('observacoes').value
         };
 
         try {
@@ -359,10 +359,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(vendaData)
             });
             const result = await response.json();
-            if (!response.ok) throw new Error(result.erro || 'Erro ao finalizar venda.');
-
-            imprimirComprovante(result, carrinho, { subtotal, descontoPercent, total });
-            showCustomAlert(`Venda #${result.vendaId} registrada com sucesso!`, 'success');
+            if (!response.ok) throw new Error(result.erro || 'Erro ao registrar venda no backend.');
+            
+            gerarComprovante(result, carrinho, totais, vendaData);
+            // Removido o alerta daqui para não sobrepor o comprovante
+            
             limparVenda();
             await carregarTodosOsProdutos();
 
@@ -370,13 +371,67 @@ document.addEventListener("DOMContentLoaded", () => {
             showCustomAlert(error.message, 'error');
         }
     }
-    
-    function formatarMoeda(valor) {
-        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    function gerarComprovante(vendaRegistrada, itensVendidos, totais, vendaInfo) {
+        const vendedor = vendedorSelect.options[vendedorSelect.selectedIndex].text.split(' (')[0];
+        const dataVenda = new Date().toLocaleString('pt-BR');
+
+        let itensHtml = '';
+        itensVendidos.forEach(item => {
+            itensHtml += `<tr><td style="padding: 4px 2px;">${item.quantidade}x ${item.nome}</td><td style="text-align:right; padding: 4px 2px;">${formatarMoeda(item.preco * item.quantidade)}</td></tr>`;
+        });
+
+        const comprovanteHtml = `
+            <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Venda #${vendaRegistrada.vendaId}</title>
+            <style>
+                body { font-family: 'Courier New', monospace; margin: 0; padding: 10px; font-size: 10pt; color: #000; background-color: #fff; }
+                .comprovante { width: 300px; margin: auto; } .header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px; margin-bottom: 5px; }
+                h2, p { margin: 0 0 5px 0; } .item-table { width: 100%; border-collapse: collapse; margin-top: 10px;}
+                .total-section { border-top: 1px dashed #000; padding-top: 5px; margin-top: 5px;}
+                .total-section div { display: flex; justify-content: space-between; padding: 2px 0; }
+                .no-print { margin-top: 20px; text-align: center; }
+                @media print { .no-print { display: none; } }
+            </style></head><body><div class="comprovante">
+                <div class="header"><h2>Farmácia A Barateira</h2><p>Rua Principal, 123</p></div>
+                <p>CUPOM NAO FISCAL</p><p>------------------------------</p>
+                <p><strong>Venda:</strong> #${vendaRegistrada.vendaId}</p><p><strong>Data:</strong> ${dataVenda}</p>
+                <p><strong>Vendedor:</strong> ${vendedor}</p><p><strong>Cliente:</strong> ${clienteAtual ? clienteAtual.nome : 'Consumidor Final'}</p>
+                <p>------------------------------</p>
+                <table class="item-table"><tbody>${itensHtml}</tbody></table>
+                <div class="total-section">
+                    <div><span>Subtotal:</span><span>${formatarMoeda(totais.subtotal)}</span></div>
+                    <div><span>Desconto:</span><span>${totais.descontoPercent}%</span></div>
+                    <div style="font-weight: bold; font-size: 1.2em;"><span>TOTAL:</span><span>${formatarMoeda(totais.total)}</span></div>
+                </div>
+                <p>------------------------------</p>
+                <p><strong>Forma de Pagamento:</strong> ${vendaInfo.formaPagamento}</p>
+                ${vendaInfo.observacoes ? `<p><strong>Obs:</strong> ${vendaInfo.observacoes}</p>` : ''}
+                <p style="text-align:center; margin-top: 15px;">Obrigado e volte sempre!</p>
+                <div class="no-print"><button onclick="window.print()">Imprimir</button> <button onclick="window.close()">Fechar</button></div>
+            </div></body></html>`;
+
+        const novaAba = window.open('', '_blank', 'width=320,height=600');
+        novaAba.document.write(comprovanteHtml);
+        novaAba.document.close();
     }
 
-    // --- EVENT LISTENERS ---
+    // --- FUNÇÕES DE APOIO ---
+    function limparVenda() {
+        carrinho = [];
+        removerCliente();
+        descontoInput.value = 0;
+        document.getElementById('observacoes').value = '';
+        const formaPagamento = document.querySelector('input[name="forma-pagamento"]:checked');
+        if (formaPagamento) formaPagamento.checked = false;
+        renderizarCarrinho();
+        filtrarErenderizarProdutos();
+    }
+    
+    function formatarMoeda(valor) { return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+
+    // --- CONFIGURAÇÃO DOS EVENT LISTENERS ---
     function configurarEventListeners() {
+        // Debounce para otimizar a busca
         clienteSearchInput.addEventListener('keyup', (e) => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => buscarClientes(e.target.value), 300);
@@ -400,11 +455,12 @@ document.addEventListener("DOMContentLoaded", () => {
         
         carrinhoContainer.addEventListener('click', e => {
             const button = e.target.closest('button[data-action="remover-item"]');
-            if (button) {
+            if(button) {
                 alterarQuantidadeCarrinho(parseInt(button.dataset.id, 10), 0);
             }
         });
-        carrinhoContainer.addEventListener('change', e => {
+        
+        carrinhoContainer.addEventListener('input', e => {
              if(e.target.matches('input[type="number"]')) {
                 const novaQuantidade = parseInt(e.target.value, 10);
                 const produtoId = parseInt(e.target.dataset.id, 10);
@@ -421,7 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
         novoClienteBtn.addEventListener('click', () => { window.open('clientes.html', '_blank'); });
 
         descontoInput.addEventListener('input', calcularTotais);
-        finalizarVendaBtn.addEventListener('click', finalizarVenda);
+        finalizarVendaBtn.addEventListener('click', iniciarFinalizacao);
         cancelarVendaBtn.addEventListener('click', () => {
             if (carrinho.length > 0 && confirm("Tem certeza que deseja cancelar e limpar a venda atual?")) {
                 limparVenda();
