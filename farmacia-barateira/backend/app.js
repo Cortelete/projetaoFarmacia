@@ -1,4 +1,4 @@
-// Conteúdo CORRIGIDO para backend/app.js
+// Conteúdo COMPLETO e ATUALIZADO para backend/app.js
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -13,6 +13,7 @@ const vendaRoutes = require("./routes/vendas");
 const vendaItensRoutes = require("./routes/vendaItens"); 
 const compraRoutes = require("./routes/compras"); 
 const compraItensRoutes = require("./routes/compraItens"); 
+const dashboardRoutes = require("./routes/dashboard"); // <-- ADICIONADO
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/vendas", vendaRoutes);
 app.use("/api/venda_itens", vendaItensRoutes); 
 app.use("/api/compras", compraRoutes); 
 app.use("/api/compra_itens", compraItensRoutes); 
+app.use("/api/dashboard", dashboardRoutes); // <-- ADICIONADO
 
 // Middleware para tratamento de erro genérico (opcional, mas recomendado)
 app.use((err, req, res, next) => {

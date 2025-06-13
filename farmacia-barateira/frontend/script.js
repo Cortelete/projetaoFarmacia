@@ -1,14 +1,14 @@
+// Conteúdo CORRIGIDO para /script.js
+
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("login-form");
     const errorMessageDiv = document.getElementById("error-message");
 
-    // Define a URL base da sua API backend
-    // Certifique-se de que o backend esteja rodando e acessível nesta URL
-    const API_BASE_URL = "http://localhost:3000/api"; // Ajuste a porta se necessário
+    const API_BASE_URL = "http://localhost:3000/api";
 
     loginForm.addEventListener("submit", async (event) => {
-        event.preventDefault(); // Impede o envio padrão do formulário
-        errorMessageDiv.style.display = "none"; // Esconde mensagens de erro anteriores
+        event.preventDefault();
+        errorMessageDiv.style.display = "none";
         errorMessageDiv.textContent = "";
 
         const email = document.getElementById("email").value;
@@ -27,22 +27,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) { // Status 200-299
                 console.log("Login bem-sucedido:", data);
-                // Armazenar informações do usuário (ex: token ou dados básicos) se necessário
-                // Exemplo: localStorage.setItem('usuarioLogado', JSON.stringify(data.usuario));
                 
-                // Redirecionar para a página principal (dashboard/painel)
-                // Criaremos esta página a seguir
+                // Armazena o token e os dados do usuário no localStorage do navegador
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('usuarioLogado', JSON.stringify(data.usuario));
+                
+                // Redireciona para o dashboard
                 window.location.href = "dashboard.html"; 
+
             } else {
-                // Exibir mensagem de erro vinda da API ou uma genérica
-                errorMessageDiv.textContent = data.erro || `Erro ${response.status}: Ocorreu um problema ao tentar fazer login.`;
+                errorMessageDiv.textContent = data.erro || `Erro: Tente novamente.`;
                 errorMessageDiv.style.display = "block";
             }
         } catch (error) {
             console.error("Erro na requisição de login:", error);
-            errorMessageDiv.textContent = "Não foi possível conectar ao servidor. Verifique sua conexão ou tente mais tarde.";
+            errorMessageDiv.textContent = "Não foi possível conectar ao servidor.";
             errorMessageDiv.style.display = "block";
         }
     });
 });
-

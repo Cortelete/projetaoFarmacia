@@ -1,39 +1,60 @@
+// Conteúdo COMPLETO e CORRIGIDO para /backend/models/clienteModel.js
+
 const db = require("../database/db");
 
 const Cliente = {
-  // Função para listar todos os clientes
+  // Função para listar todos os clientes, agora buscando todos os campos
   listarTodos: (callback) => {
-    const sql = "SELECT id, nome, telefone, endereco FROM clientes";
+    const sql = "SELECT id, nome, telefone, endereco, status, emoji, dataCadastro FROM clientes";
     db.all(sql, callback);
   },
 
-  // Função para buscar um cliente pelo ID
+  // Função para buscar um cliente pelo ID, agora buscando todos os campos
   buscarPorId: (id, callback) => {
-    const sql = "SELECT id, nome, telefone, endereco FROM clientes WHERE id = ?";
+    const sql = "SELECT id, nome, telefone, endereco, status, emoji, dataCadastro FROM clientes WHERE id = ?";
     db.get(sql, [id], callback);
   },
 
-  // Função para cadastrar um novo cliente
+  // Função para cadastrar um novo cliente, agora mais robusta
   cadastrar: (cliente, callback) => {
-    const sql = "INSERT INTO clientes (nome, telefone, endereco) VALUES (?, ?, ?)";
-    const params = [cliente.nome, cliente.telefone, cliente.endereco];
+    // Desestruturamos o objeto cliente com valores padrão para evitar erros
+    const { 
+        nome, 
+        telefone = null, 
+        endereco = null, 
+        status = 1, // Padrão é 'Ativo'
+        emoji = '👤' // Padrão é um emoji genérico
+    } = cliente;
+
+    // Verificação essencial para o campo NOT NULL
+    if (!nome) {
+        return callback(new Error("O campo 'nome' é obrigatório."));
+    }
+
+    const sql = "INSERT INTO clientes (nome, telefone, endereco, status, emoji) VALUES (?, ?, ?, ?, ?)";
+    const params = [nome, telefone, endereco, status, emoji];
+    
     db.run(sql, params, function (err) {
       if (err) {
-        console.error("Erro ao cadastrar cliente:", err.message);
+        console.error("Erro ao cadastrar cliente no banco de dados:", err.message);
         return callback(err);
       }
       callback(null, { id: this.lastID });
     });
   },
 
-  // Função para atualizar um cliente
+  // Função para atualizar um cliente, AGORA INCLUINDO STATUS E EMOJI
   atualizar: (id, dadosCliente, callback) => {
     let fields = [];
     let params = [];
 
+    // Adiciona os campos à query de forma dinâmica, apenas se eles existirem nos dados recebidos
     if (dadosCliente.nome) { fields.push("nome = ?"); params.push(dadosCliente.nome); }
     if (dadosCliente.telefone) { fields.push("telefone = ?"); params.push(dadosCliente.telefone); }
     if (dadosCliente.endereco) { fields.push("endereco = ?"); params.push(dadosCliente.endereco); }
+    // A verificação '!= undefined' é crucial para permitir salvar o status 0 (Inativo)
+    if (dadosCliente.status !== undefined) { fields.push("status = ?"); params.push(dadosCliente.status); } 
+    if (dadosCliente.emoji !== undefined) { fields.push("emoji = ?"); params.push(dadosCliente.emoji); }
 
     if (fields.length === 0) {
       return callback(new Error("Nenhum campo para atualizar fornecido."));
@@ -53,9 +74,6 @@ const Cliente = {
 
   // Função para deletar um cliente
   deletar: (id, callback) => {
-    // Atenção: A chave estrangeira em 'vendas' está configurada como ON DELETE SET NULL.
-    // Isso significa que deletar um cliente não causará erro se ele tiver vendas, 
-    // mas o cliente_id nessas vendas ficará NULL.
     const sql = "DELETE FROM clientes WHERE id = ?";
     db.run(sql, [id], function(err) {
       if (err) {
@@ -68,4 +86,3 @@ const Cliente = {
 };
 
 module.exports = Cliente;
-

@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <!-- Scripts essenciais que precisam carregar ANTES de tudo -->
+    <script src="theme-loader.js"></script>
+    <script src="authGuard.js"></script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Farmácia A Barateira</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/heroicons/2.1.3/24/outline/heroicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet">
     <style>
-        /* Estilo para esconder/mostrar submenus (exemplo) */
         .submenu { display: none; }
         .menu-item:hover .submenu { display: block; }
-        /* Adicionar transições se desejar */
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
 
     <div id="main-layout" class="flex min-h-screen">
 
-        <aside class="w-64 bg-gradient-to-b from-blue-600 to-cyan-600 text-white flex flex-col p-4 shadow-lg">
+        <!-- Sidebar com novo gradiente roxo -->
+        <aside class="w-64 bg-gradient-to-b from-purple-700 to-purple-800 text-white flex flex-col p-4 shadow-lg">
             <div class="flex items-center mb-8">
                 <svg class="h-8 w-8 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /> 
@@ -28,53 +32,44 @@
     
             <nav class="flex-1">
                 <ul>
-                    <li class="mb-4 menu-item">
-                        <a href="#" class="flex items-center p-2 rounded hover:bg-cyan-700 transition-colors">
+                    <li class="mb-4 menu-item bg-purple-900/50 rounded">
+                        <a href="dashboard.html" class="flex items-center p-2 rounded transition-colors">
                             <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                             Início
                         </a>
                     </li>
                     <li class="mb-4 menu-item">
-                        <a href="vendas.html" class="flex items-center p-2 rounded hover:bg-cyan-700 transition-colors">
+                        <a href="vendas.html" class="flex items-center p-2 rounded hover:bg-purple-700 transition-colors">
                             <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             Vendas
                         </a>
-                        <ul class="submenu ml-4 mt-2">
-                            <li><a href="vendas.html" class="block p-1 hover:bg-cyan-800 rounded">Nova Venda</a></li>
-                            <li><a href="historico-vendas.html" class="block p-1 hover:bg-cyan-800 rounded">Histórico</a></li>
-                        </ul>
                     </li>
                     <li class="mb-4 menu-item">
-                        <a href="estoque.html" class="flex items-center p-2 rounded hover:bg-cyan-700 transition-colors">
+                        <a href="estoque.html" class="flex items-center p-2 rounded hover:bg-purple-700 transition-colors">
                             <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                             Estoque
                         </a>
-                        <ul class="submenu ml-4 mt-2">
-                            <li><a href="estoque.html" class="block p-1 hover:bg-cyan-800 rounded">Visualizar</a></li>
-                            <li><a href="#" class="block p-1 hover:bg-cyan-800 rounded">Cadastrar Medicamento</a></li>
-                            <li><a href="#" class="block p-1 hover:bg-cyan-800 rounded">Registrar Compra</a></li>
-                        </ul>
                     </li>
                     <li class="mb-4 menu-item">
-                        <a href="clientes.html" class="flex items-center p-2 rounded hover:bg-cyan-700 transition-colors">
+                        <a href="clientes.html" class="flex items-center p-2 rounded hover:bg-purple-700 transition-colors">
                             <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.197-5.986" /></svg>
                             Clientes
                         </a>
                     </li>
                     <li class="mb-4 menu-item">
-                        <a href="fornecedores.html" class="flex items-center p-2 rounded hover:bg-cyan-700 transition-colors">
+                        <a href="fornecedores.html" class="flex items-center p-2 rounded hover:bg-purple-700 transition-colors">
                             <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                             Fornecedores
                         </a>
                     </li>
                     <li class="mb-4 menu-item">
-                        <a href="relatorios.html" class="flex items-center p-2 rounded hover:bg-cyan-700 transition-colors">
+                        <a href="relatorios.html" class="flex items-center p-2 rounded hover:bg-purple-700 transition-colors">
                             <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-3-5v5m-3-8v8M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H7a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                             Relatórios
                         </a>
                     </li>
                     <li class="mb-4 menu-item">
-                        <a href="configuracoes.html" class="flex items-center p-2 rounded hover:bg-cyan-700 transition-colors">
+                        <a href="configuracoes.html" class="flex items-center p-2 rounded hover:bg-purple-700 transition-colors">
                             <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                             Configurações
                         </a>
@@ -91,135 +86,102 @@
         </aside>
     
         <main class="flex-1 p-8">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-6">Painel Principal</h2>
+            <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-6">Painel Principal</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-                    <h3 class="text-lg font-medium text-gray-600 mb-2">Vendas Hoje</h3>
-                    <p class="text-3xl font-bold text-blue-600">R$ 1.234,56</p>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-purple-900/20 transition-shadow">
+                    <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">Vendas Hoje</h3>
+                    <p id="stats-vendas-hoje" class="text-3xl font-bold text-purple-600 dark:text-purple-400">R$ 0,00</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-                    <h3 class="text-lg font-medium text-gray-600 mb-2">Itens em Estoque Baixo</h3>
-                    <p class="text-3xl font-bold text-orange-500">15</p>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-orange-900/20 transition-shadow">
+                    <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">Itens em Estoque Baixo</h3>
+                    <p id="stats-estoque-baixo" class="text-3xl font-bold text-orange-500 dark:text-orange-400">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-                    <h3 class="text-lg font-medium text-gray-600 mb-2">Novos Clientes (Mês)</h3>
-                    <p class="text-3xl font-bold text-green-500">8</p>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-green-900/20 transition-shadow">
+                    <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">Novos Clientes (Mês)</h3>
+                    <p id="stats-novos-clientes" class="text-3xl font-bold text-green-500 dark:text-green-400">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-                    <h3 class="text-lg font-medium text-gray-600 mb-2">Medicamentos Cadastrados</h3>
-                    <p class="text-3xl font-bold text-cyan-600">250</p>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-indigo-900/20 transition-shadow">
+                    <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">Medicamentos Cadastrados</h3>
+                    <p id="stats-total-medicamentos" class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">0</p>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow relatorio-card">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-purple-900/20 transition-shadow relatorio-card">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-600 mb-2">Total de Vendas</h3>
-                            <p class="text-3xl font-bold text-blue-600">R$ 45.789,50</p>
+                            <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">Total de Vendas</h3>
+                            <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">R$ 45.789,50</p>
                         </div>
                         <div class="text-3xl">💰</div>
                     </div>
                     <div class="mt-4">
-                        <div class="flex items-center">
-                            <span class="text-green-500 flex items-center text-sm">
-                                <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                </svg>
-                                12.5%
-                            </span>
-                            <span class="text-gray-500 text-sm ml-2">vs. mês anterior</span>
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                            <span class="text-green-500 dark:text-green-400 flex items-center"><svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>12.5%</span>
+                            <span class="ml-2">vs. mês anterior</span>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow relatorio-card">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-purple-900/20 transition-shadow relatorio-card">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-600 mb-2">Número de Vendas</h3>
-                            <p class="text-3xl font-bold text-purple-600">387</p>
+                            <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">Número de Vendas</h3>
+                            <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">387</p>
                         </div>
                         <div class="text-3xl">🛒</div>
                     </div>
                     <div class="mt-4">
-                        <div class="flex items-center">
-                            <span class="text-green-500 flex items-center text-sm">
-                                <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                </svg>
-                                8.3%
-                            </span>
-                            <span class="text-gray-500 text-sm ml-2">vs. mês anterior</span>
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                            <span class="text-green-500 dark:text-green-400 flex items-center"><svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>8.3%</span>
+                            <span class="ml-2">vs. mês anterior</span>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow relatorio-card">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-orange-900/20 transition-shadow relatorio-card">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-600 mb-2">Ticket Médio</h3>
-                            <p class="text-3xl font-bold text-orange-500">R$ 118,32</p>
+                            <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">Ticket Médio</h3>
+                            <p class="text-3xl font-bold text-orange-500 dark:text-orange-400">R$ 118,32</p>
                         </div>
                         <div class="text-3xl">🎫</div>
                     </div>
                     <div class="mt-4">
-                        <div class="flex items-center">
-                            <span class="text-red-500 flex items-center text-sm">
-                                <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                                </svg>
-                                2.1%
-                            </span>
-                            <span class="text-gray-500 text-sm ml-2">vs. mês anterior</span>
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                            <span class="text-red-500 dark:text-red-400 flex items-center"><svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>2.1%</span>
+                            <span class="ml-2">vs. mês anterior</span>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow relatorio-card">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-green-900/20 transition-shadow relatorio-card">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-600 mb-2">Novos Clientes</h3>
-                            <p class="text-3xl font-bold text-green-600">42</p>
+                            <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">Novos Clientes</h3>
+                            <p class="text-3xl font-bold text-green-600 dark:text-green-400">42</p>
                         </div>
                         <div class="text-3xl">👥</div>
                     </div>
                     <div class="mt-4">
-                        <div class="flex items-center">
-                            <span class="text-green-500 flex items-center text-sm">
-                                <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                </svg>
-                                15.7%
-                            </span>
-                            <span class="text-gray-500 text-sm ml-2">vs. mês anterior</span>
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                            <span class="text-green-500 dark:text-green-400 flex items-center"><svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>15.7%</span>
+                            <span class="ml-2">vs. mês anterior</span>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h3 class="text-xl font-semibold text-gray-700 mb-4">Atividade Recente</h3>
-                <p class="text-gray-600">Nenhuma atividade recente para mostrar.</p>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4">Atividade Recente</h3>
+                <div id="atividade-recente-container">
+                    <p class="text-gray-600 dark:text-gray-400">Nenhuma atividade recente para mostrar.</p>
+                </div>
             </div>
-    
         </main>
-    
     </div>
 
+    <!-- Scripts no final -->
     <script src="global.js"></script>
     <script src="dashboard_script.js"></script> 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("Página carregada: " + document.title);
-            
-            // Garantir que os links do menu funcionem
-            document.querySelectorAll('aside a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    console.log("Clicou em: " + this.href);
-                    // Não previne o comportamento padrão para permitir a navegação
-                });
-            });
-        });
-    </script>
     <script src="fix_menu.js"></script>
-
 </body>
 </html>

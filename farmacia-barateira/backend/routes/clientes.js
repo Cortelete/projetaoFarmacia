@@ -1,3 +1,5 @@
+// Conteúdo REVISADO para /backend/routes/clientes.js
+
 const express = require("express");
 const router = express.Router();
 const Cliente = require("../models/clienteModel");
@@ -50,10 +52,6 @@ router.put("/:id", (req, res) => {
   const { id } = req.params;
   const dadosCliente = req.body;
 
-  if (dadosCliente.nome === "") {
-    return res.status(400).json({ erro: "Nome do cliente não pode ser vazio." });
-  }
-
   Cliente.atualizar(id, dadosCliente, (err, result) => {
     if (err) {
       console.error(`Erro ao atualizar cliente ${id}:`, err);
@@ -81,7 +79,7 @@ router.delete("/:id", (req, res) => {
     if (result.changes === 0) {
       return res.status(404).json({ erro: "Cliente não encontrado para deleção." });
     }
-    res.json({ mensagem: "Cliente deletado com sucesso! Vendas associadas (se houver) agora não têm mais cliente vinculado." });
+    res.json({ mensagem: "Cliente deletado com sucesso!" });
   });
 });
 

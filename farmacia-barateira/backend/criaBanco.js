@@ -54,7 +54,10 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
     telefone TEXT,
-    endereco TEXT
+    endereco TEXT,
+    status INTEGER DEFAULT 1,
+    emoji TEXT,
+    dataCadastro DATETIME DEFAULT CURRENT_TIMESTAMP
   )`, (err) => {
     if (err) console.error("Erro ao criar tabela clientes:", err.message); else console.log("Tabela clientes OK.");
   });
